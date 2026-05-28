@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Atlas v2.1 - PrimeNG Table Demo</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 20px; }
+        h1 { color: #1a1a2e; }
+        .p-datatable { border: 1px solid #dee2e6; border-radius: 4px; }
+        .p-datatable-wrapper table { width: 100%; border-collapse: collapse; }
+        .p-datatable-thead th { background: #f8f9fa; padding: 12px; font-weight: 600; border-bottom: 2px solid #dee2e6; text-align: left; }
+        .p-datatable-tbody tr { border-bottom: 1px solid #dee2e6; }
+        .p-datatable-tbody tr:hover { background: #e9ecef; }
+        .p-datatable-tbody td { padding: 12px; }
+        .p-tag { padding: 3px 8px; border-radius: 3px; font-size: 12px; font-weight: 600; display: inline-block; }
+        .p-tag-success { background: #c8e6c9; color: #256029; }
+        .p-tag-warning { background: #feedaf; color: #8a5340; }
+        .p-tag-danger { background: #ffcdd2; color: #c63737; }
+        .p-tag-info { background: #b3e5fc; color: #23547b; }
+        .p-paginator { display: flex; align-items: center; justify-content: center; padding: 12px; gap: 4px; border-top: 1px solid #dee2e6; }
+        .p-paginator-page { border: 1px solid #dee2e6; border-radius: 4px; min-width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; background: white; }
+        .p-paginator-page-active { background: #007bff; color: white; border-color: #007bff; }
+        .p-paginator-prev, .p-paginator-next { border: 1px solid #dee2e6; border-radius: 4px; padding: 6px 12px; cursor: pointer; background: white; }
+        .p-disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+        button.action-btn { border: 1px solid #007bff; background: white; color: #007bff; padding: 4px 10px; border-radius: 3px; cursor: pointer; margin-right: 4px; font-size: 12px; }
+        button.action-btn:hover { background: #007bff; color: white; }
+        #notification { display: none; padding: 10px 16px; margin-top: 10px; background: #c8e6c9; border: 1px solid #a5d6a7; border-radius: 4px; color: #256029; }
+    </style>
+</head>
+<body>
+    <h1>Employee Management System</h1>
+    <p>Atlas v2.1 Enterprise Table Engine - PrimeNG Demo</p>
+
+    <div id="primeNGTableDemo" class="p-datatable p-component">
+        <div class="p-datatable-wrapper">
+            <table role="grid">
+                <thead class="p-datatable-thead">
+                    <tr>
+                        <th role="columnheader">ID</th>
+                        <th role="columnheader">Name</th>
+                        <th role="columnheader">Status</th>
+                        <th role="columnheader">Department</th>
+                        <th role="columnheader">Amount</th>
+                        <th role="columnheader">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="p-datatable-tbody" id="primeNGTableBody">
+                </tbody>
+            </table>
+        </div>
+        <div class="p-paginator p-component" id="primeNGPaginator">
+        </div>
+    </div>
+
+    <div id="notification"></div>
+
+    <script>
+        var primeData = [
+            { id: "EMP-101", name: "Alice Johnson", status: "Active", statusClass: "success", department: "Engineering", amount: "8500.00" },
+            { id: "EMP-102", name: "Bob Martinez", status: "On Leave", statusClass: "warning", department: "Marketing", amount: "7200.00" },
+            { id: "EMP-103", name: "Carol Williams", status: "Active", statusClass: "success", department: "Engineering", amount: "9100.00" },
+            { id: "EMP-104", name: "David Chen", status: "Terminated", statusClass: "danger", department: "Finance", amount: "0.00" },
+            { id: "EMP-105", name: "Eva Schmidt", status: "Active", statusClass: "success", department: "HR", amount: "6800.00" },
+            { id: "EMP-106", name: "Frank Okafor", status: "Active", statusClass: "success", department: "Engineering", amount: "9500.00" },
+            { id: "EMP-107", name: "Grace Kim", status: "Probation", statusClass: "info", department: "Product", amount: "7000.00" },
+            { id: "EMP-108", name: "Henry Patel", status: "Active", statusClass: "success", department: "Engineering", amount: "10200.00" },
+            { id: "EMP-109", name: "Irene Costa", status: "On Leave", statusClass: "warning", department: "Sales", amount: "6500.00" },
+            { id: "EMP-110", name: "James Wilson", status: "Active", statusClass: "success", department: "Engineering", amount: "8800.00" },
+            { id: "EMP-111", name: "Karen Tanaka", status: "Active", statusClass: "success", department: "Design", amount: "7500.00" },
+            { id: "EMP-112", name: "Leo Rossi", status: "Probation", statusClass: "info", department: "Finance", amount: "6200.00" },
+            { id: "EMP-113", name: "Maria Santos", status: "Active", statusClass: "success", department: "Engineering", amount: "9800.00" },
+            { id: "EMP-114", name: "Nathan Brooks", status: "Terminated", statusClass: "danger", department: "Operations", amount: "0.00" },
+            { id: "EMP-115", name: "Olivia Zhang", status: "Active", statusClass: "success", department: "Product", amount: "8200.00" }
+        ];
+
+        var primePageSize = 5;
+        var primeCurrentPage = 1;
+        var primeTotalPages = Math.ceil(primeData.length / primePageSize);
+
+        function renderPrimeTable() {
+            var tbody = document.getElementById('primeNGTableBody');
+            tbody.innerHTML = '';
+            var start = (primeCurrentPage - 1) * primePageSize;
+            var end = Math.min(start + primePageSize, primeData.length);
+
+            for (var i = start; i < end; i++) {
+                var row = primeData[i];
+                var tr = document.createElement('tr');
+                tr.innerHTML =
+                    '<td>' + row.id + '</td>' +
+                    '<td>' + row.name + '</td>' +
+                    '<td><span class="p-tag p-tag-' + row.statusClass + '">' + row.status + '</span></td>' +
+                    '<td>' + row.department + '</td>' +
+                    '<td>' + row.amount + '</td>' +
+                    '<td>' +
+                        '<button class="action-btn" title="Edit" onclick="doAction(\'Edit\', \'' + row.id + '\')">Edit</button>' +
+                        '<button class="action-btn" title="View" onclick="doAction(\'View\', \'' + row.id + '\')">View</button>' +
+                    '</td>';
+                tbody.appendChild(tr);
+            }
+            renderPrimePaginator();
+        }
+
+        function renderPrimePaginator() {
+            var paginator = document.getElementById('primeNGPaginator');
+            paginator.innerHTML = '';
+
+            var prevBtn = document.createElement('button');
+            prevBtn.className = 'p-paginator-prev' + (primeCurrentPage === 1 ? ' p-disabled' : '');
+            prevBtn.textContent = 'Previous';
+            if (primeCurrentPage === 1) prevBtn.setAttribute('disabled', 'true');
+            prevBtn.onclick = function() { changePrimePage(primeCurrentPage - 1); };
+            paginator.appendChild(prevBtn);
+
+            for (var p = 1; p <= primeTotalPages; p++) {
+                var pageBtn = document.createElement('button');
+                pageBtn.className = 'p-paginator-page' + (p === primeCurrentPage ? ' p-paginator-page-active' : '');
+                pageBtn.textContent = p;
+                pageBtn.onclick = (function(page) { return function() { changePrimePage(page); }; })(p);
+                paginator.appendChild(pageBtn);
+            }
+
+            var nextBtn = document.createElement('button');
+            nextBtn.className = 'p-paginator-next' + (primeCurrentPage === primeTotalPages ? ' p-disabled' : '');
+            nextBtn.textContent = 'Next';
+            if (primeCurrentPage === primeTotalPages) nextBtn.setAttribute('disabled', 'true');
+            nextBtn.onclick = function() { changePrimePage(primeCurrentPage + 1); };
+            paginator.appendChild(nextBtn);
+        }
+
+        function changePrimePage(page) {
+            if (page >= 1 && page <= primeTotalPages) {
+                primeCurrentPage = page;
+                renderPrimeTable();
+            }
+        }
+
+        function doAction(action, id) {
+            var notification = document.getElementById('notification');
+            notification.textContent = action + ' action performed on: ' + id;
+            notification.style.display = 'block';
+            setTimeout(function() { notification.style.display = 'none'; }, 3000);
+        }
+
+        renderPrimeTable();
+    </script>
+</body>
+</html>

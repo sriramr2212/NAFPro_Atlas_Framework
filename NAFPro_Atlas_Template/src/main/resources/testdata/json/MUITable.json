@@ -1,0 +1,42 @@
+{
+  "_module": "MUITable",
+  "TC_DEMO_MUI_001": {
+    "ID": "INV-301",
+    "Name": "Alice Johnson",
+    "Status": "Paid",
+    "Department": "Engineering",
+    "Amount": "15000.00"
+  },
+  "TC_DEMO_MUI_002": {
+    "ID": "INV-303",
+    "Name": "Carol Williams",
+    "Status": "Paid",
+    "Department": "Engineering",
+    "Amount": "22000.00"
+  },
+  "TC_DEMO_MUI_003": {
+    "ID": "INV-308",
+    "Name": "Henry Patel",
+    "Status": "Paid",
+    "Department": "Engineering",
+    "Amount": "12000.00"
+  },
+  "TC_DEMO_MUI_004": {
+    "ID": "INV-310",
+    "Name": "James Wilson",
+    "Status": "Paid",
+    "Department": "Engineering",
+    "Amount": "25000.00"
+  },
+  "TC_DEMO_MUI_005": {
+    "ID": "INV-301",
+    "Name": "Alice Johnson"
+  },
+  "TC_DEMO_MUI_006": {
+    "ID": "INV-313",
+    "Name": "Maria Santos",
+    "Status": "Paid",
+    "Department": "Engineering",
+    "Amount": "28000.00"
+  }
+}

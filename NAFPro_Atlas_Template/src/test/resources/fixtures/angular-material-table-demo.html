@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Atlas v2.1 - Angular Material Table Demo</title>
+    <style>
+        body { font-family: Roboto, 'Helvetica Neue', sans-serif; margin: 20px; }
+        h1 { color: #3f51b5; }
+        .mat-table-container { border: 1px solid #e0e0e0; border-radius: 4px; overflow: hidden; }
+        table.mat-mdc-table { width: 100%; border-collapse: collapse; }
+        .mat-mdc-header-row { background: #fafafa; }
+        .mat-mdc-header-cell { padding: 12px 16px; font-weight: 500; font-size: 12px; color: rgba(0,0,0,.54); text-align: left; border-bottom: 1px solid #e0e0e0; }
+        .mat-mdc-row { border-bottom: 1px solid #e0e0e0; }
+        .mat-mdc-row:hover { background: #f5f5f5; }
+        .mat-mdc-cell { padding: 12px 16px; font-size: 14px; }
+        .mat-mdc-chip { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 16px; font-size: 12px; font-weight: 500; }
+        .mat-mdc-chip.critical { background: #ffebee; color: #c62828; }
+        .mat-mdc-chip.high { background: #fff3e0; color: #e65100; }
+        .mat-mdc-chip.medium { background: #e3f2fd; color: #1565c0; }
+        .mat-mdc-chip.low { background: #e8f5e9; color: #2e7d32; }
+        .mat-mdc-paginator { display: flex; align-items: center; justify-content: flex-end; padding: 8px 16px; border-top: 1px solid #e0e0e0; }
+        .mat-mdc-paginator-range-label { margin: 0 16px; font-size: 12px; color: rgba(0,0,0,.54); }
+        .mat-mdc-paginator-navigation-previous, .mat-mdc-paginator-navigation-next { border: none; background: transparent; cursor: pointer; padding: 8px; border-radius: 50%; font-size: 14px; }
+        .mat-mdc-paginator-navigation-previous:hover, .mat-mdc-paginator-navigation-next:hover { background: #f5f5f5; }
+        .mat-mdc-paginator-navigation-previous:disabled, .mat-mdc-paginator-navigation-next:disabled { opacity: 0.38; cursor: default; }
+        button.mat-action { border: none; background: transparent; color: #3f51b5; cursor: pointer; padding: 4px 8px; border-radius: 4px; font-size: 13px; }
+        button.mat-action:hover { background: #e8eaf6; }
+        #notification { display: none; padding: 10px 16px; margin-top: 10px; background: #e8f5e9; border-radius: 4px; color: #2e7d32; }
+    </style>
+</head>
+<body>
+    <h1>Issue Tracker</h1>
+    <p>Atlas v2.1 Enterprise Table Engine - Angular Material Demo</p>
+
+    <div id="angularMaterialTableDemo" class="mat-table-container">
+        <table mat-table class="mat-mdc-table">
+            <thead>
+                <tr class="mat-mdc-header-row">
+                    <th mat-header-cell class="mat-mdc-header-cell">ID</th>
+                    <th mat-header-cell class="mat-mdc-header-cell">Name</th>
+                    <th mat-header-cell class="mat-mdc-header-cell">Status</th>
+                    <th mat-header-cell class="mat-mdc-header-cell">Department</th>
+                    <th mat-header-cell class="mat-mdc-header-cell">Amount</th>
+                    <th mat-header-cell class="mat-mdc-header-cell">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="matTableBody">
+            </tbody>
+        </table>
+        <mat-paginator class="mat-mdc-paginator" id="matPaginator">
+        </mat-paginator>
+    </div>
+
+    <div id="notification"></div>
+
+    <script>
+        var matData = [
+            { id: "TKT-201", name: "Alice Johnson", status: "Open", statusClass: "high", department: "Engineering", amount: "15000.00" },
+            { id: "TKT-202", name: "Bob Martinez", status: "In Progress", statusClass: "medium", department: "Marketing", amount: "8500.00" },
+            { id: "TKT-203", name: "Carol Williams", status: "Open", statusClass: "critical", department: "Engineering", amount: "22000.00" },
+            { id: "TKT-204", name: "David Chen", status: "Resolved", statusClass: "low", department: "Finance", amount: "5000.00" },
+            { id: "TKT-205", name: "Eva Schmidt", status: "Open", statusClass: "medium", department: "HR", amount: "9200.00" },
+            { id: "TKT-206", name: "Frank Okafor", status: "In Progress", statusClass: "high", department: "Engineering", amount: "18000.00" },
+            { id: "TKT-207", name: "Grace Kim", status: "Open", statusClass: "critical", department: "Product", amount: "30000.00" },
+            { id: "TKT-208", name: "Henry Patel", status: "Resolved", statusClass: "low", department: "Engineering", amount: "12000.00" },
+            { id: "TKT-209", name: "Irene Costa", status: "In Progress", statusClass: "medium", department: "Sales", amount: "7500.00" },
+            { id: "TKT-210", name: "James Wilson", status: "Open", statusClass: "high", department: "Engineering", amount: "25000.00" },
+            { id: "TKT-211", name: "Karen Tanaka", status: "Open", statusClass: "medium", department: "Design", amount: "11000.00" },
+            { id: "TKT-212", name: "Leo Rossi", status: "In Progress", statusClass: "high", department: "Finance", amount: "16000.00" },
+            { id: "TKT-213", name: "Maria Santos", status: "Open", statusClass: "critical", department: "Engineering", amount: "28000.00" },
+            { id: "TKT-214", name: "Nathan Brooks", status: "Resolved", statusClass: "low", department: "Operations", amount: "6000.00" },
+            { id: "TKT-215", name: "Olivia Zhang", status: "Open", statusClass: "medium", department: "Product", amount: "13500.00" }
+        ];
+
+        var matPageSize = 5;
+        var matCurrentPage = 1;
+        var matTotalPages = Math.ceil(matData.length / matPageSize);
+
+        function renderMatTable() {
+            var tbody = document.getElementById('matTableBody');
+            tbody.innerHTML = '';
+            var start = (matCurrentPage - 1) * matPageSize;
+            var end = Math.min(start + matPageSize, matData.length);
+
+            for (var i = start; i < end; i++) {
+                var row = matData[i];
+                var tr = document.createElement('tr');
+                tr.setAttribute('mat-row', '');
+                tr.className = 'mat-mdc-row';
+                tr.innerHTML =
+                    '<td mat-cell class="mat-mdc-cell">' + row.id + '</td>' +
+                    '<td mat-cell class="mat-mdc-cell">' + row.name + '</td>' +
+                    '<td mat-cell class="mat-mdc-cell"><span class="mat-mdc-chip ' + row.statusClass + '">' + row.status + '</span></td>' +
+                    '<td mat-cell class="mat-mdc-cell">' + row.department + '</td>' +
+                    '<td mat-cell class="mat-mdc-cell">' + row.amount + '</td>' +
+                    '<td mat-cell class="mat-mdc-cell">' +
+                        '<button class="mat-action" title="Edit" onclick="matAction(\'Edit\', \'' + row.id + '\')">Edit</button>' +
+                        '<button class="mat-action" title="Assign" onclick="matAction(\'Assign\', \'' + row.id + '\')">Assign</button>' +
+                    '</td>';
+                tbody.appendChild(tr);
+            }
+            renderMatPaginator();
+        }
+
+        function renderMatPaginator() {
+            var paginator = document.getElementById('matPaginator');
+            var startItem = (matCurrentPage - 1) * matPageSize + 1;
+            var endItem = Math.min(matCurrentPage * matPageSize, matData.length);
+            paginator.innerHTML =
+                '<button class="mat-mdc-paginator-navigation-previous" aria-label="Previous page" ' +
+                    (matCurrentPage === 1 ? 'disabled' : '') +
+                    ' onclick="changeMatPage(' + (matCurrentPage - 1) + ')">← Prev</button>' +
+                '<span class="mat-mdc-paginator-range-label">' + startItem + ' – ' + endItem + ' of ' + matData.length + '</span>' +
+                '<button class="mat-mdc-paginator-navigation-next" aria-label="Next page" ' +
+                    (matCurrentPage === matTotalPages ? 'disabled' : '') +
+                    ' onclick="changeMatPage(' + (matCurrentPage + 1) + ')">Next →</button>';
+        }
+
+        function changeMatPage(page) {
+            if (page >= 1 && page <= matTotalPages) {
+                matCurrentPage = page;
+                renderMatTable();
+            }
+        }
+
+        function matAction(action, id) {
+            var notification = document.getElementById('notification');
+            notification.textContent = action + ' action performed on: ' + id;
+            notification.style.display = 'block';
+            setTimeout(function() { notification.style.display = 'none'; }, 3000);
+        }
+
+        renderMatTable();
+    </script>
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Atlas v2.0 - Ant Design Table Demo</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 20px; }
+        h1 { color: #1a1a2e; }
+        .ant-table-wrapper { border: 1px solid #f0f0f0; border-radius: 4px; }
+        .ant-table { width: 100%; }
+        .ant-table-container { overflow: auto; }
+        .ant-table-content table { width: 100%; border-collapse: collapse; }
+        .ant-table-thead th.ant-table-cell { background: #fafafa; padding: 12px; font-weight: 600; border-bottom: 1px solid #f0f0f0; text-align: left; }
+        .ant-table-tbody tr.ant-table-row { border-bottom: 1px solid #f0f0f0; }
+        .ant-table-tbody tr.ant-table-row:hover { background: #e6f7ff; }
+        .ant-table-tbody td.ant-table-cell { padding: 12px; }
+        .ant-tag { padding: 2px 8px; border-radius: 2px; font-size: 12px; display: inline-block; }
+        .ant-tag-green { background: #f6ffed; border: 1px solid #b7eb8f; color: #52c41a; }
+        .ant-tag-orange { background: #fff7e6; border: 1px solid #ffd591; color: #fa8c16; }
+        .ant-tag-red { background: #fff1f0; border: 1px solid #ffa39e; color: #f5222d; }
+        .ant-tag-blue { background: #e6f7ff; border: 1px solid #91d5ff; color: #1890ff; }
+        .ant-dropdown-trigger { border: none; background: transparent; cursor: pointer; font-size: 18px; padding: 4px 8px; border-radius: 4px; }
+        .ant-dropdown-trigger:hover { background: #f5f5f5; }
+        .ant-pagination { display: flex; list-style: none; padding: 12px; margin: 0; gap: 4px; justify-content: flex-end; }
+        .ant-pagination li { display: flex; }
+        .ant-pagination-item { border: 1px solid #d9d9d9; border-radius: 4px; min-width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .ant-pagination-item a { text-decoration: none; color: #333; padding: 0 8px; }
+        .ant-pagination-item-active { border-color: #1890ff; }
+        .ant-pagination-item-active a { color: #1890ff; }
+        .ant-pagination-prev, .ant-pagination-next { display: flex; align-items: center; }
+        .ant-pagination-prev button, .ant-pagination-next button { border: 1px solid #d9d9d9; border-radius: 4px; padding: 4px 10px; cursor: pointer; background: white; }
+        .ant-pagination-disabled button { opacity: 0.5; cursor: not-allowed; }
+        .ant-dropdown { position: absolute; background: white; box-shadow: 0 3px 6px -4px rgba(0,0,0,.12), 0 6px 16px 0 rgba(0,0,0,.08); border-radius: 4px; z-index: 1000; }
+        .ant-dropdown-hidden { display: none; }
+        .ant-dropdown-menu { list-style: none; padding: 4px 0; margin: 0; }
+        .ant-dropdown-menu-item { padding: 8px 16px; cursor: pointer; }
+        .ant-dropdown-menu-item:hover { background: #f5f5f5; }
+        .ant-dropdown-menu-item span { display: block; }
+        #notification { display: none; padding: 10px 16px; margin-top: 10px; background: #f6ffed; border: 1px solid #b7eb8f; border-radius: 4px; color: #52c41a; }
+    </style>
+</head>
+<body>
+    <h1>Request Management Portal</h1>
+    <p>Atlas v2.0 Enterprise Table Engine - Ant Design Demo</p>
+
+    <div id="antdTableDemo" class="ant-table-wrapper">
+        <div class="ant-table">
+            <div class="ant-table-container">
+                <div class="ant-table-content">
+                    <table>
+                        <thead class="ant-table-thead">
+                            <tr>
+                                <th class="ant-table-cell">Request ID</th>
+                                <th class="ant-table-cell">Requester</th>
+                                <th class="ant-table-cell">Department</th>
+                                <th class="ant-table-cell">Type</th>
+                                <th class="ant-table-cell">Status</th>
+                                <th class="ant-table-cell">Priority</th>
+                                <th class="ant-table-cell">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="ant-table-tbody" id="antdTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <ul class="ant-pagination" id="antdPagination">
+        </ul>
+    </div>
+
+    <div id="antdDropdown" class="ant-dropdown ant-dropdown-hidden">
+        <ul class="ant-dropdown-menu">
+            <li class="ant-dropdown-menu-item" onclick="executeAction('Approve')"><span>Approve</span></li>
+            <li class="ant-dropdown-menu-item" onclick="executeAction('Reject')"><span>Reject</span></li>
+            <li class="ant-dropdown-menu-item" onclick="executeAction('Edit')"><span>Edit</span></li>
+            <li class="ant-dropdown-menu-item" onclick="executeAction('View')"><span>View</span></li>
+            <li class="ant-dropdown-menu-item" onclick="executeAction('Delete')"><span>Delete</span></li>
+        </ul>
+    </div>
+
+    <div id="notification"></div>
+
+    <script>
+        var antdData = [
+            // Page 1
+            { id: "REQ-2001", requester: "Alice Johnson", department: "Engineering", type: "Access Request", status: "Pending", statusColor: "orange", priority: "High" },
+            { id: "REQ-2002", requester: "Bob Martinez", department: "Marketing", type: "Budget Approval", status: "Approved", statusColor: "green", priority: "Medium" },
+            { id: "REQ-2003", requester: "Carol Williams", department: "Engineering", type: "Hardware Request", status: "Pending", statusColor: "orange", priority: "Low" },
+            { id: "REQ-2004", requester: "David Chen", department: "Finance", type: "Travel Request", status: "Rejected", statusColor: "red", priority: "Medium" },
+            { id: "REQ-2005", requester: "Eva Schmidt", department: "HR", type: "Leave Request", status: "Approved", statusColor: "green", priority: "Low" },
+            // Page 2
+            { id: "REQ-2006", requester: "Frank Okafor", department: "Engineering", type: "Access Request", status: "Pending", statusColor: "orange", priority: "High" },
+            { id: "REQ-2007", requester: "Grace Kim", department: "Product", type: "Feature Request", status: "In Review", statusColor: "blue", priority: "High" },
+            { id: "REQ-2008", requester: "Henry Patel", department: "Engineering", type: "Infrastructure", status: "Approved", statusColor: "green", priority: "Critical" },
+            { id: "REQ-2009", requester: "Irene Costa", department: "Sales", type: "Budget Approval", status: "Pending", statusColor: "orange", priority: "Medium" },
+            { id: "REQ-2010", requester: "James Wilson", department: "Engineering", type: "Access Request", status: "Approved", statusColor: "green", priority: "Low" },
+            // Page 3
+            { id: "REQ-2011", requester: "Karen Tanaka", department: "Design", type: "Hardware Request", status: "Pending", statusColor: "orange", priority: "Medium" },
+            { id: "REQ-2012", requester: "Leo Rossi", department: "Finance", type: "Budget Approval", status: "In Review", statusColor: "blue", priority: "High" },
+            { id: "REQ-2013", requester: "Maria Santos", department: "Engineering", type: "Access Request", status: "Pending", statusColor: "orange", priority: "Critical" },
+            { id: "REQ-2014", requester: "Nathan Brooks", department: "Operations", type: "Infrastructure", status: "Approved", statusColor: "green", priority: "High" },
+            { id: "REQ-2015", requester: "Olivia Zhang", department: "Product", type: "Feature Request", status: "Pending", statusColor: "orange", priority: "Medium" }
+        ];
+
+        var antdPageSize = 5;
+        var antdCurrentPage = 1;
+        var antdTotalPages = Math.ceil(antdData.length / antdPageSize);
+        var activeRowId = null;
+
+        function renderAntdTable() {
+            var tbody = document.getElementById('antdTableBody');
+            tbody.innerHTML = '';
+            var start = (antdCurrentPage - 1) * antdPageSize;
+            var end = Math.min(start + antdPageSize, antdData.length);
+
+            for (var i = start; i < end; i++) {
+                var row = antdData[i];
+                var tr = document.createElement('tr');
+                tr.className = 'ant-table-row';
+                tr.setAttribute('data-row-key', row.id);
+                tr.innerHTML =
+                    '<td class="ant-table-cell"><span>' + row.id + '</span></td>' +
+                    '<td class="ant-table-cell"><span>' + row.requester + '</span></td>' +
+                    '<td class="ant-table-cell"><span>' + row.department + '</span></td>' +
+                    '<td class="ant-table-cell"><span>' + row.type + '</span></td>' +
+                    '<td class="ant-table-cell"><span class="ant-tag ant-tag-' + row.statusColor + '">' + row.status + '</span></td>' +
+                    '<td class="ant-table-cell"><span>' + row.priority + '</span></td>' +
+                    '<td class="ant-table-cell">' +
+                        '<button id="MeatBallMenu_' + row.id + '" class="ant-dropdown-trigger" onclick="showMenu(event, \'' + row.id + '\')">⋮</button>' +
+                    '</td>';
+                tbody.appendChild(tr);
+            }
+
+            renderPagination();
+        }
+
+        function renderPagination() {
+            var pagination = document.getElementById('antdPagination');
+            pagination.innerHTML = '';
+
+            // Previous button
+            var prevLi = document.createElement('li');
+            prevLi.className = 'ant-pagination-prev' + (antdCurrentPage === 1 ? ' ant-pagination-disabled' : '');
+            prevLi.innerHTML = '<button ' + (antdCurrentPage === 1 ? 'disabled' : '') + ' onclick="antdChangePage(' + (antdCurrentPage - 1) + ')">Previous</button>';
+            pagination.appendChild(prevLi);
+
+            // Page numbers
+            for (var p = 1; p <= antdTotalPages; p++) {
+                var li = document.createElement('li');
+                li.className = 'ant-pagination-item' + (p === antdCurrentPage ? ' ant-pagination-item-active' : '');
+                li.setAttribute('title', p);
+                li.innerHTML = '<a onclick="antdChangePage(' + p + ')">' + p + '</a>';
+                pagination.appendChild(li);
+            }
+
+            // Next button
+            var nextLi = document.createElement('li');
+            nextLi.className = 'ant-pagination-next' + (antdCurrentPage === antdTotalPages ? ' ant-pagination-disabled' : '');
+            nextLi.innerHTML = '<button ' + (antdCurrentPage === antdTotalPages ? 'disabled' : '') + ' onclick="antdChangePage(' + (antdCurrentPage + 1) + ')">Next</button>';
+            pagination.appendChild(nextLi);
+        }
+
+        function antdChangePage(page) {
+            if (page >= 1 && page <= antdTotalPages) {
+                antdCurrentPage = page;
+                renderAntdTable();
+            }
+        }
+
+        function showMenu(event, rowId) {
+            event.stopPropagation();
+            activeRowId = rowId;
+            var dropdown = document.getElementById('antdDropdown');
+            var rect = event.target.getBoundingClientRect();
+            dropdown.style.top = (rect.bottom + window.scrollY) + 'px';
+            dropdown.style.left = (rect.left + window.scrollX) + 'px';
+            dropdown.classList.remove('ant-dropdown-hidden');
+        }
+
+        function executeAction(action) {
+            var dropdown = document.getElementById('antdDropdown');
+            dropdown.classList.add('ant-dropdown-hidden');
+            var notification = document.getElementById('notification');
+            notification.textContent = action + ' action performed on request: ' + activeRowId;
+            notification.style.display = 'block';
+            setTimeout(function() { notification.style.display = 'none'; }, 3000);
+        }
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.classList.contains('ant-dropdown-trigger')) {
+                document.getElementById('antdDropdown').classList.add('ant-dropdown-hidden');
+            }
+        });
+
+        renderAntdTable();
+    </script>
+</body>
+</html>

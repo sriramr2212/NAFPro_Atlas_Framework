@@ -1,0 +1,31 @@
+{
+  "_module": "Calculator",
+  "TC_CALC_001": {
+    "Operand1": "7",
+    "Operator": "+",
+    "Operand2": "3",
+    "Expected": "10"
+  },
+  "TC_CALC_002": {
+    "TargetMode": "Scientific",
+    "ExpectedTitle": "Scientific"
+  },
+  "TC_CALC_003": {
+    "InputDigit": "5",
+    "ExpectedAfterClear": "0"
+  },
+  "TC_CALC_004": {
+    "Operand1": "5",
+    "Operator": "+",
+    "Operand2": "3",
+    "Expected": "8"
+  },
+  "TC_CALC_005": {
+    "Expression": "123+456=",
+    "Expected": "579"
+  },
+  "TC_CALC_006": {
+    "MemoryValue": "42",
+    "Expected": "42"
+  }
+}

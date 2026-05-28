@@ -1,0 +1,42 @@
+{
+  "_module": "PrimeNGTable",
+  "TC_DEMO_PRIMENG_001": {
+    "ID": "EMP-101",
+    "Name": "Alice Johnson",
+    "Status": "Active",
+    "Department": "Engineering",
+    "Amount": "8500.00"
+  },
+  "TC_DEMO_PRIMENG_002": {
+    "ID": "EMP-103",
+    "Name": "Carol Williams",
+    "Status": "Active",
+    "Department": "Engineering",
+    "Amount": "9100.00"
+  },
+  "TC_DEMO_PRIMENG_003": {
+    "ID": "EMP-108",
+    "Name": "Henry Patel",
+    "Status": "Active",
+    "Department": "Engineering",
+    "Amount": "10200.00"
+  },
+  "TC_DEMO_PRIMENG_004": {
+    "ID": "EMP-106",
+    "Name": "Frank Okafor",
+    "Status": "Active",
+    "Department": "Engineering",
+    "Amount": "9500.00"
+  },
+  "TC_DEMO_PRIMENG_005": {
+    "ID": "EMP-101",
+    "Name": "Alice Johnson"
+  },
+  "TC_DEMO_PRIMENG_006": {
+    "ID": "EMP-113",
+    "Name": "Maria Santos",
+    "Status": "Active",
+    "Department": "Engineering",
+    "Amount": "9800.00"
+  }
+}

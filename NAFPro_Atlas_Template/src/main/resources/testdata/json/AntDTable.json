@@ -1,0 +1,49 @@
+{
+  "_module": "AntDTable",
+  "TC_DEMO_ANTD_001": {
+    "RequestID": "REQ-2001",
+    "Requester": "Alice Johnson",
+    "Department": "Engineering",
+    "Type": "Access Request",
+    "Status": "Pending",
+    "Priority": "High"
+  },
+  "TC_DEMO_ANTD_002": {
+    "RequestID": "REQ-2006",
+    "Requester": "Frank Okafor",
+    "Department": "Engineering",
+    "Type": "Access Request",
+    "Status": "Pending",
+    "Priority": "High"
+  },
+  "TC_DEMO_ANTD_003": {
+    "RequestID": "REQ-2013",
+    "Requester": "Maria Santos",
+    "Department": "Engineering",
+    "Type": "Access Request",
+    "Status": "Pending",
+    "Priority": "Critical"
+  },
+  "TC_DEMO_ANTD_004": {
+    "RequestID": "REQ-2008",
+    "Requester": "Henry Patel",
+    "Department": "Engineering",
+    "Type": "Infrastructure",
+    "Status": "Approved",
+    "Priority": "Critical"
+  },
+  "TC_DEMO_ANTD_005": {
+    "RequestID": "REQ-2001"
+  },
+  "TC_DEMO_ANTD_006": {
+    "ID": "REQ-2013",
+    "RequestID": "REQ-2013",
+    "Name": "Maria Santos",
+    "Requester": "Maria Santos",
+    "Status": "Pending",
+    "Department": "Engineering",
+    "Amount": "Critical",
+    "Type": "Access Request",
+    "Priority": "Critical"
+  }
+}

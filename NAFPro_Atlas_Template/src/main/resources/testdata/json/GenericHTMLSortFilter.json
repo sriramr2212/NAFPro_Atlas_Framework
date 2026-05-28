@@ -1,0 +1,26 @@
+{
+  "_module": "GenericHTMLSortFilter",
+  "TC_DEMO_GENERIC_SF_001": {
+    "CustomerName": "Alice Johnson"
+  },
+  "TC_DEMO_GENERIC_SF_002": {
+    "CustomerName": "Alice Johnson"
+  },
+  "TC_DEMO_GENERIC_SF_003": {
+    "FilterStatus": "Active",
+    "VisibleCustomer": "Alice Johnson",
+    "ExcludedStatus": "Pending"
+  },
+  "TC_DEMO_GENERIC_SF_004": {
+    "SearchTerm": "Enterprise",
+    "ExpectedCustomer": "Alice Johnson",
+    "ExcludedCustomer": "Bob Martinez"
+  },
+  "TC_DEMO_GENERIC_SF_005": {
+    "CustomerName": "Alice Johnson"
+  },
+  "TC_DEMO_GENERIC_SF_006": {
+    "CustomerName": "Alice Johnson",
+    "VisibleCustomer": "Alice Johnson"
+  }
+}

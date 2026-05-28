@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Atlas v2.0 - AG Grid Table Demo</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #1a1a2e; }
+        .ag-root-wrapper { border: 1px solid #bdc3c7; border-radius: 4px; overflow: hidden; }
+        .ag-root { display: flex; flex-direction: column; }
+        .ag-header { background: #2c3e50; }
+        .ag-header-row { display: flex; }
+        .ag-header-cell { flex: 1; padding: 10px; color: white; font-weight: bold; border-right: 1px solid #34495e; }
+        .ag-body-viewport { max-height: 400px; overflow-y: auto; }
+        .ag-row { display: flex; border-bottom: 1px solid #ecf0f1; }
+        .ag-row:hover { background: #ebf5fb; }
+        .ag-cell { flex: 1; padding: 10px; border-right: 1px solid #ecf0f1; display: flex; align-items: center; }
+        .ag-paging-panel { display: flex; align-items: center; justify-content: center; padding: 10px; gap: 10px; background: #f8f9fa; border-top: 1px solid #ddd; }
+        .ag-paging-button { padding: 6px 12px; cursor: pointer; border: 1px solid #ccc; background: white; border-radius: 3px; }
+        .ag-paging-button:disabled, .ag-paging-button.ag-disabled { opacity: 0.5; cursor: not-allowed; }
+        button[title] { padding: 4px 10px; margin: 0 2px; cursor: pointer; border: 1px solid #2980b9; background: #3498db; color: white; border-radius: 3px; }
+        button[title]:hover { background: #2980b9; }
+        button.more { background: #95a5a6; border-color: #7f8c8d; font-size: 16px; padding: 2px 8px; }
+        #notification { display: none; padding: 10px; margin-top: 10px; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px; color: #155724; }
+    </style>
+</head>
+<body>
+    <h1>Order Management Grid</h1>
+    <p>Atlas v2.0 Enterprise Table Engine - AG Grid Demo</p>
+
+    <div id="agGridDemo" class="ag-root-wrapper">
+        <div class="ag-root ag-grid">
+            <div class="ag-header">
+                <div class="ag-header-row">
+                    <div class="ag-header-cell" aria-colindex="1"><span class="ag-header-cell-text">Order ID</span></div>
+                    <div class="ag-header-cell" aria-colindex="2"><span class="ag-header-cell-text">Customer</span></div>
+                    <div class="ag-header-cell" aria-colindex="3"><span class="ag-header-cell-text">Product</span></div>
+                    <div class="ag-header-cell" aria-colindex="4"><span class="ag-header-cell-text">Status</span></div>
+                    <div class="ag-header-cell" aria-colindex="5"><span class="ag-header-cell-text">Amount</span></div>
+                    <div class="ag-header-cell" aria-colindex="6"><span class="ag-header-cell-text">Owner</span></div>
+                    <div class="ag-header-cell" aria-colindex="7"><span class="ag-header-cell-text">Actions</span></div>
+                </div>
+            </div>
+            <div class="ag-body-viewport" id="gridBody">
+            </div>
+            <div class="ag-paging-panel">
+                <button ref="btPrevious" class="ag-paging-button ag-disabled" disabled onclick="gridChangePage(-1)">Previous</button>
+                <span class="ag-paging-page-summary-panel" id="gridPageInfo">Page 1 of 3</span>
+                <button ref="btNext" class="ag-paging-button" onclick="gridChangePage(1)">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification"></div>
+
+    <script>
+        var gridData = [
+            // Page 1
+            { orderId: "ORD-1001", customer: "TechCorp Inc", product: "Cloud Platform", status: "Active", amount: "12500.00", owner: "Sarah Parker" },
+            { orderId: "ORD-1002", customer: "GlobalTrade Ltd", product: "Analytics Suite", status: "Pending", amount: "8900.00", owner: "Michael Chen" },
+            { orderId: "ORD-1003", customer: "DataFlow Systems", product: "Cloud Platform", status: "Active", amount: "15200.00", owner: "Sarah Parker" },
+            { orderId: "ORD-1004", customer: "InnovateTech", product: "Security Module", status: "Active", amount: "6700.00", owner: "James Wilson" },
+            { orderId: "ORD-1005", customer: "NextGen Solutions", product: "Analytics Suite", status: "Cancelled", amount: "0.00", owner: "Emily Davis" },
+            // Page 2
+            { orderId: "ORD-1006", customer: "CloudFirst Corp", product: "Cloud Platform", status: "Active", amount: "18300.00", owner: "Sarah Parker" },
+            { orderId: "ORD-1007", customer: "SmartOps Inc", product: "Security Module", status: "Pending", amount: "7400.00", owner: "Michael Chen" },
+            { orderId: "ORD-1008", customer: "Pacific Digital", product: "Analytics Suite", status: "Active", amount: "9800.00", owner: "James Wilson" },
+            { orderId: "ORD-1009", customer: "EuroSoft GmbH", product: "Cloud Platform", status: "Active", amount: "14100.00", owner: "Emily Davis" },
+            { orderId: "ORD-1010", customer: "Atlas Dynamics", product: "Enterprise Bundle", status: "Active", amount: "22000.00", owner: "Sarah Parker" },
+            // Page 3
+            { orderId: "ORD-1011", customer: "Quantum Labs", product: "Security Module", status: "Active", amount: "8200.00", owner: "Michael Chen" },
+            { orderId: "ORD-1012", customer: "Meridian Tech", product: "Cloud Platform", status: "Pending", amount: "11500.00", owner: "James Wilson" },
+            { orderId: "ORD-1013", customer: "Apex Solutions", product: "Analytics Suite", status: "Active", amount: "7600.00", owner: "Emily Davis" },
+            { orderId: "ORD-1014", customer: "Vertex Systems", product: "Enterprise Bundle", status: "Active", amount: "19800.00", owner: "Sarah Parker" },
+            { orderId: "ORD-1015", customer: "Horizon Digital", product: "Cloud Platform", status: "Inactive", amount: "0.00", owner: "Michael Chen" }
+        ];
+
+        var gridPageSize = 5;
+        var gridCurrentPage = 1;
+        var gridTotalPages = Math.ceil(gridData.length / gridPageSize);
+
+        function renderGrid() {
+            var body = document.getElementById('gridBody');
+            body.innerHTML = '';
+            var start = (gridCurrentPage - 1) * gridPageSize;
+            var end = Math.min(start + gridPageSize, gridData.length);
+
+            for (var i = start; i < end; i++) {
+                var row = gridData[i];
+                var div = document.createElement('div');
+                div.className = 'ag-row';
+                div.setAttribute('row-index', i - start);
+                div.innerHTML =
+                    '<div class="ag-cell" aria-colindex="1">' + row.orderId + '</div>' +
+                    '<div class="ag-cell" aria-colindex="2">' + row.customer + '</div>' +
+                    '<div class="ag-cell" aria-colindex="3">' + row.product + '</div>' +
+                    '<div class="ag-cell" aria-colindex="4">' + row.status + '</div>' +
+                    '<div class="ag-cell" aria-colindex="5">' + row.amount + '</div>' +
+                    '<div class="ag-cell" aria-colindex="6">' + row.owner + '</div>' +
+                    '<div class="ag-cell" aria-colindex="7">' +
+                        '<button title="Edit" onclick="gridAction(\'Edit\', \'' + row.orderId + '\')">Edit</button>' +
+                        '<button title="View" onclick="gridAction(\'View\', \'' + row.orderId + '\')">View</button>' +
+                        '<button class="more" aria-label="more" onclick="gridAction(\'More\', \'' + row.orderId + '\')">⋮</button>' +
+                    '</div>';
+                body.appendChild(div);
+            }
+
+            document.getElementById('gridPageInfo').textContent = 'Page ' + gridCurrentPage + ' of ' + gridTotalPages;
+            var prevBtn = document.querySelector('[ref="btPrevious"]');
+            var nextBtn = document.querySelector('[ref="btNext"]');
+            prevBtn.disabled = (gridCurrentPage === 1);
+            nextBtn.disabled = (gridCurrentPage === gridTotalPages);
+            if (gridCurrentPage === 1) { prevBtn.classList.add('ag-disabled'); } else { prevBtn.classList.remove('ag-disabled'); }
+            if (gridCurrentPage === gridTotalPages) { nextBtn.classList.add('ag-disabled'); } else { nextBtn.classList.remove('ag-disabled'); }
+        }
+
+        function gridChangePage(delta) {
+            var newPage = gridCurrentPage + delta;
+            if (newPage >= 1 && newPage <= gridTotalPages) {
+                gridCurrentPage = newPage;
+                renderGrid();
+            }
+        }
+
+        function gridAction(action, orderId) {
+            var notification = document.getElementById('notification');
+            notification.textContent = action + ' action performed on order: ' + orderId;
+            notification.style.display = 'block';
+            setTimeout(function() { notification.style.display = 'none'; }, 3000);
+        }
+
+        renderGrid();
+    </script>
+</body>
+</html>

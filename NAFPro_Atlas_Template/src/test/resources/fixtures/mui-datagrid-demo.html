@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Atlas v2.1 - MUI DataGrid Demo</title>
+    <style>
+        body { font-family: Roboto, 'Helvetica Neue', sans-serif; margin: 20px; }
+        h1 { color: #1976d2; }
+        .MuiDataGrid-root { border: 1px solid #e0e0e0; border-radius: 4px; overflow: hidden; }
+        .MuiDataGrid-columnHeaders { background: #fafafa; border-bottom: 1px solid #e0e0e0; display: flex; }
+        .MuiDataGrid-columnHeader { padding: 12px 16px; font-weight: 500; font-size: 14px; color: rgba(0,0,0,.87); flex: 1; }
+        .MuiDataGrid-columnHeaderTitle { font-weight: 500; }
+        .MuiDataGrid-virtualScroller { overflow: auto; }
+        .MuiDataGrid-row { display: flex; border-bottom: 1px solid #e0e0e0; }
+        .MuiDataGrid-row:hover { background: #f5f5f5; }
+        .MuiDataGrid-cell { padding: 12px 16px; font-size: 14px; flex: 1; display: flex; align-items: center; }
+        .MuiChip-root { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 16px; font-size: 13px; }
+        .MuiChip-root.paid { background: #e8f5e9; color: #2e7d32; }
+        .MuiChip-root.pending { background: #fff3e0; color: #e65100; }
+        .MuiChip-root.overdue { background: #ffebee; color: #c62828; }
+        .MuiChip-root.draft { background: #e3f2fd; color: #1565c0; }
+        .MuiDataGrid-footerContainer { display: flex; align-items: center; justify-content: flex-end; padding: 8px 16px; border-top: 1px solid #e0e0e0; }
+        .MuiTablePagination-displayedRows { margin: 0 16px; font-size: 12px; color: rgba(0,0,0,.54); }
+        .MuiIconButton-root { border: none; background: transparent; cursor: pointer; padding: 8px; border-radius: 50%; font-size: 14px; }
+        .MuiIconButton-root:hover { background: #f5f5f5; }
+        .Mui-disabled { opacity: 0.38; cursor: default !important; pointer-events: none; }
+        button.mui-action { border: none; background: transparent; color: #1976d2; cursor: pointer; padding: 4px 8px; border-radius: 4px; font-size: 13px; margin-right: 4px; }
+        button.mui-action:hover { background: #e3f2fd; }
+        #notification { display: none; padding: 10px 16px; margin-top: 10px; background: #e8f5e9; border-radius: 4px; color: #2e7d32; }
+    </style>
+</head>
+<body>
+    <h1>Invoice Management</h1>
+    <p>Atlas v2.1 Enterprise Table Engine - MUI DataGrid Demo</p>
+
+    <div id="muiDataGridDemo" class="MuiDataGrid-root" role="grid">
+        <div class="MuiDataGrid-columnHeaders" role="rowgroup">
+            <div class="MuiDataGrid-columnHeader" role="columnheader">
+                <div class="MuiDataGrid-columnHeaderTitle">ID</div>
+            </div>
+            <div class="MuiDataGrid-columnHeader" role="columnheader">
+                <div class="MuiDataGrid-columnHeaderTitle">Name</div>
+            </div>
+            <div class="MuiDataGrid-columnHeader" role="columnheader">
+                <div class="MuiDataGrid-columnHeaderTitle">Status</div>
+            </div>
+            <div class="MuiDataGrid-columnHeader" role="columnheader">
+                <div class="MuiDataGrid-columnHeaderTitle">Department</div>
+            </div>
+            <div class="MuiDataGrid-columnHeader" role="columnheader">
+                <div class="MuiDataGrid-columnHeaderTitle">Amount</div>
+            </div>
+            <div class="MuiDataGrid-columnHeader" role="columnheader">
+                <div class="MuiDataGrid-columnHeaderTitle">Actions</div>
+            </div>
+        </div>
+        <div class="MuiDataGrid-virtualScroller">
+            <div class="MuiDataGrid-virtualScrollerContent" id="muiGridBody">
+            </div>
+        </div>
+        <div class="MuiDataGrid-footerContainer MuiTablePagination-root" id="muiPaginator">
+        </div>
+    </div>
+
+    <div id="notification"></div>
+
+    <script>
+        var muiData = [
+            { id: "INV-301", name: "Alice Johnson", status: "Paid", statusClass: "paid", department: "Engineering", amount: "15000.00" },
+            { id: "INV-302", name: "Bob Martinez", status: "Pending", statusClass: "pending", department: "Marketing", amount: "8500.00" },
+            { id: "INV-303", name: "Carol Williams", status: "Paid", statusClass: "paid", department: "Engineering", amount: "22000.00" },
+            { id: "INV-304", name: "David Chen", status: "Overdue", statusClass: "overdue", department: "Finance", amount: "5000.00" },
+            { id: "INV-305", name: "Eva Schmidt", status: "Paid", statusClass: "paid", department: "HR", amount: "9200.00" },
+            { id: "INV-306", name: "Frank Okafor", status: "Pending", statusClass: "pending", department: "Engineering", amount: "18000.00" },
+            { id: "INV-307", name: "Grace Kim", status: "Draft", statusClass: "draft", department: "Product", amount: "30000.00" },
+            { id: "INV-308", name: "Henry Patel", status: "Paid", statusClass: "paid", department: "Engineering", amount: "12000.00" },
+            { id: "INV-309", name: "Irene Costa", status: "Pending", statusClass: "pending", department: "Sales", amount: "7500.00" },
+            { id: "INV-310", name: "James Wilson", status: "Paid", statusClass: "paid", department: "Engineering", amount: "25000.00" },
+            { id: "INV-311", name: "Karen Tanaka", status: "Pending", statusClass: "pending", department: "Design", amount: "11000.00" },
+            { id: "INV-312", name: "Leo Rossi", status: "Overdue", statusClass: "overdue", department: "Finance", amount: "16000.00" },
+            { id: "INV-313", name: "Maria Santos", status: "Paid", statusClass: "paid", department: "Engineering", amount: "28000.00" },
+            { id: "INV-314", name: "Nathan Brooks", status: "Draft", statusClass: "draft", department: "Operations", amount: "6000.00" },
+            { id: "INV-315", name: "Olivia Zhang", status: "Pending", statusClass: "pending", department: "Product", amount: "13500.00" }
+        ];
+
+        var muiPageSize = 5;
+        var muiCurrentPage = 1;
+        var muiTotalPages = Math.ceil(muiData.length / muiPageSize);
+
+        function renderMuiGrid() {
+            var body = document.getElementById('muiGridBody');
+            body.innerHTML = '';
+            var start = (muiCurrentPage - 1) * muiPageSize;
+            var end = Math.min(start + muiPageSize, muiData.length);
+
+            for (var i = start; i < end; i++) {
+                var row = muiData[i];
+                var div = document.createElement('div');
+                div.className = 'MuiDataGrid-row';
+                div.setAttribute('role', 'row');
+                div.setAttribute('data-rowindex', i);
+                div.innerHTML =
+                    '<div class="MuiDataGrid-cell" role="gridcell">' + row.id + '</div>' +
+                    '<div class="MuiDataGrid-cell" role="gridcell">' + row.name + '</div>' +
+                    '<div class="MuiDataGrid-cell" role="gridcell"><span class="MuiChip-root ' + row.statusClass + '"><span class="MuiChip-label">' + row.status + '</span></span></div>' +
+                    '<div class="MuiDataGrid-cell" role="gridcell">' + row.department + '</div>' +
+                    '<div class="MuiDataGrid-cell" role="gridcell">' + row.amount + '</div>' +
+                    '<div class="MuiDataGrid-cell" role="gridcell">' +
+                        '<button class="mui-action" title="View" onclick="muiAction(\'View\', \'' + row.id + '\')">View</button>' +
+                        '<button class="mui-action" title="Download" onclick="muiAction(\'Download\', \'' + row.id + '\')">Download</button>' +
+                    '</div>';
+                body.appendChild(div);
+            }
+            renderMuiPaginator();
+        }
+
+        function renderMuiPaginator() {
+            var paginator = document.getElementById('muiPaginator');
+            var startItem = (muiCurrentPage - 1) * muiPageSize + 1;
+            var endItem = Math.min(muiCurrentPage * muiPageSize, muiData.length);
+            paginator.innerHTML =
+                '<button aria-label="Go to previous page" class="MuiIconButton-root' + (muiCurrentPage === 1 ? ' Mui-disabled' : '') + '" ' +
+                    (muiCurrentPage === 1 ? 'disabled' : '') +
+                    ' onclick="changeMuiPage(' + (muiCurrentPage - 1) + ')">←</button>' +
+                '<span class="MuiTablePagination-displayedRows">' + startItem + '–' + endItem + ' of ' + muiData.length + '</span>' +
+                '<button aria-label="Go to next page" class="MuiIconButton-root' + (muiCurrentPage === muiTotalPages ? ' Mui-disabled' : '') + '" ' +
+                    (muiCurrentPage === muiTotalPages ? 'disabled' : '') +
+                    ' onclick="changeMuiPage(' + (muiCurrentPage + 1) + ')">→</button>';
+        }
+
+        function changeMuiPage(page) {
+            if (page >= 1 && page <= muiTotalPages) {
+                muiCurrentPage = page;
+                renderMuiGrid();
+            }
+        }
+
+        function muiAction(action, id) {
+            var notification = document.getElementById('notification');
+            notification.textContent = action + ' action performed on: ' + id;
+            notification.style.display = 'block';
+            setTimeout(function() { notification.style.display = 'none'; }, 3000);
+        }
+
+        renderMuiGrid();
+    </script>
+</body>
+</html>

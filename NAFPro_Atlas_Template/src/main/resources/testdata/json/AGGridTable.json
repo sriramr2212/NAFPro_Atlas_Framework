@@ -1,0 +1,49 @@
+{
+  "_module": "AGGridTable",
+  "TC_DEMO_AGGRID_001": {
+    "OrderID": "ORD-1001",
+    "Customer": "TechCorp Inc",
+    "Product": "Cloud Platform",
+    "Status": "Active",
+    "Amount": "12500.00",
+    "Owner": "Sarah Parker"
+  },
+  "TC_DEMO_AGGRID_002": {
+    "OrderID": "ORD-1008",
+    "Customer": "Pacific Digital",
+    "Product": "Analytics Suite",
+    "Status": "Active",
+    "Amount": "9800.00",
+    "Owner": "James Wilson"
+  },
+  "TC_DEMO_AGGRID_003": {
+    "OrderID": "ORD-1004",
+    "Customer": "InnovateTech",
+    "Product": "Security Module",
+    "Status": "Active",
+    "Amount": "6700.00",
+    "Owner": "James Wilson"
+  },
+  "TC_DEMO_AGGRID_004": {
+    "OrderID": "ORD-1010",
+    "Customer": "Atlas Dynamics",
+    "Product": "Enterprise Bundle",
+    "Status": "Active",
+    "Amount": "22000.00",
+    "Owner": "Sarah Parker"
+  },
+  "TC_DEMO_AGGRID_005": {
+    "Customer": "TechCorp Inc"
+  },
+  "TC_DEMO_AGGRID_006": {
+    "ID": "ORD-1013",
+    "OrderID": "ORD-1013",
+    "Name": "Apex Solutions",
+    "Customer": "Apex Solutions",
+    "Status": "Active",
+    "Department": "Analytics Suite",
+    "Amount": "7600.00",
+    "Product": "Analytics Suite",
+    "Owner": "Emily Davis"
+  }
+}

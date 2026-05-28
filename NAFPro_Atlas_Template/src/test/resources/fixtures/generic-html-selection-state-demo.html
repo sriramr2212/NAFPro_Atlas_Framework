@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Atlas v2.2 - Generic HTML Enterprise Table</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #1a1a2e; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: #16213e; color: white; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+        tr.selected { background-color: #e6f7ff; }
+        .pagination { margin-top: 15px; display: flex; gap: 5px; align-items: center; }
+        .pagination button { padding: 6px 12px; cursor: pointer; border: 1px solid #ccc; background: white; }
+        .pagination button.active { background: #16213e; color: white; }
+        .pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
+        button.action-btn { padding: 4px 10px; margin: 0 2px; cursor: pointer; border: 1px solid #3498db; background: #3498db; color: white; border-radius: 3px; }
+        .loading { display: none; padding: 20px; text-align: center; font-size: 14px; color: #666; }
+        .loading.active { display: block; }
+        .empty-state { display: none; padding: 20px; text-align: center; color: #999; font-size: 14px; }
+        .empty-state.active { display: block; }
+        #notification { display: none; padding: 10px; margin-top: 10px; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px; color: #155724; }
+        .selection-info { margin: 10px 0; padding: 8px; background: #f0f0f0; border-radius: 4px; font-size: 13px; }
+    </style>
+</head>
+<body>
+    <h1>Order Management System</h1>
+    <p>Atlas v2.2 Enterprise Table Engine - Selection + State Demo</p>
+
+    <!-- Main table with selection -->
+    <div id="orderTableContainer">
+        <div class="selection-info" id="selectionInfo">Selected: 0 rows</div>
+        <table id="orderTable" role="grid">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" id="selectAll" aria-label="Select all"></th>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Product</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Region</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+        <nav class="pagination" aria-label="Table pagination">
+            <button class="prev" aria-label="Previous" onclick="changePage(-1)">Previous</button>
+            <span id="pageInfo">Page 1 of 3</span>
+            <button class="next" aria-label="Next" onclick="changePage(1)">Next</button>
+        </nav>
+    </div>
+
+    <!-- Empty state table -->
+    <div id="emptyTableContainer" style="margin-top: 40px;">
+        <h2>Empty Table Demo</h2>
+        <table id="emptyTable" role="grid">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" disabled></th>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <div class="empty-state active" id="emptyMessage">No records found</div>
+    </div>
+
+    <!-- Loading state table -->
+    <div id="loadingTableContainer" style="margin-top: 40px;">
+        <h2>Loading Table Demo</h2>
+        <table id="loadingTable" role="grid">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <div class="loading active" id="loadingIndicator" aria-busy="true">Loading data, please wait...</div>
+    </div>
+
+    <div id="notification"></div>
+
+    <script>
+        var allData = [
+            { id: "ORD-001", customer: "Alice Johnson", product: "Widget Pro", amount: "4500.00", status: "Active", region: "North America" },
+            { id: "ORD-002", customer: "Bob Martinez", product: "Widget Basic", amount: "1200.00", status: "Pending", region: "Europe" },
+            { id: "ORD-003", customer: "Carol Williams", product: "Widget Pro", amount: "2800.00", status: "Active", region: "Asia Pacific" },
+            { id: "ORD-004", customer: "David Chen", product: "Widget Enterprise", amount: "8200.00", status: "Active", region: "North America" },
+            { id: "ORD-005", customer: "Eva Schmidt", product: "Widget Basic", amount: "950.00", status: "Cancelled", region: "Europe" },
+            { id: "ORD-006", customer: "Frank Okafor", product: "Widget Pro", amount: "3100.00", status: "Active", region: "Africa" },
+            { id: "ORD-007", customer: "Grace Kim", product: "Widget Enterprise", amount: "7800.00", status: "Pending", region: "Asia Pacific" },
+            { id: "ORD-008", customer: "Henry Patel", product: "Widget Pro", amount: "2600.00", status: "Active", region: "Asia Pacific" },
+            { id: "ORD-009", customer: "Irene Costa", product: "Widget Basic", amount: "1500.00", status: "Active", region: "South America" },
+            { id: "ORD-010", customer: "James Wilson", product: "Widget Enterprise", amount: "9200.00", status: "Active", region: "Europe" },
+            { id: "ORD-011", customer: "Karen Tanaka", product: "Widget Pro", amount: "3400.00", status: "Active", region: "Asia Pacific" },
+            { id: "ORD-012", customer: "Leo Rossi", product: "Widget Basic", amount: "1100.00", status: "Pending", region: "Europe" },
+            { id: "ORD-013", customer: "Maria Santos", product: "Widget Enterprise", amount: "6900.00", status: "Active", region: "South America" },
+            { id: "ORD-014", customer: "Nathan Brooks", product: "Widget Pro", amount: "2200.00", status: "Cancelled", region: "North America" },
+            { id: "ORD-015", customer: "Olivia Zhang", product: "Widget Enterprise", amount: "8500.00", status: "Active", region: "Asia Pacific" }
+        ];
+
+        var pageSize = 5;
+        var currentPage = 1;
+        var totalPages = 3;
+
+        function renderTable() {
+            var tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            var start = (currentPage - 1) * pageSize;
+            var end = Math.min(start + pageSize, allData.length);
+
+            for (var i = start; i < end; i++) {
+                var row = allData[i];
+                var tr = document.createElement('tr');
+                tr.setAttribute('data-row-id', row.id);
+                tr.innerHTML =
+                    '<td><input type="checkbox" class="row-select" aria-label="Select row"></td>' +
+                    '<td>' + row.id + '</td>' +
+                    '<td>' + row.customer + '</td>' +
+                    '<td>' + row.product + '</td>' +
+                    '<td>' + row.amount + '</td>' +
+                    '<td>' + row.status + '</td>' +
+                    '<td>' + row.region + '</td>' +
+                    '<td>' +
+                        '<button class="action-btn" data-action="Edit" title="Edit" onclick="performAction(\'Edit\', \'' + row.id + '\')">Edit</button>' +
+                        '<button class="action-btn" data-action="View" title="View" onclick="performAction(\'View\', \'' + row.id + '\')">View</button>' +
+                    '</td>';
+                tbody.appendChild(tr);
+            }
+
+            bindCheckboxes();
+            document.getElementById('pageInfo').textContent = 'Page ' + currentPage + ' of ' + totalPages;
+            document.querySelector('.prev').disabled = (currentPage === 1);
+            document.querySelector('.next').disabled = (currentPage === totalPages);
+            document.getElementById('selectAll').checked = false;
+            updateSelectionInfo();
+        }
+
+        function bindCheckboxes() {
+            document.querySelectorAll('#tableBody .row-select').forEach(function(cb) {
+                cb.addEventListener('change', function() {
+                    var row = this.closest('tr');
+                    if (this.checked) row.classList.add('selected');
+                    else row.classList.remove('selected');
+                    updateHeaderCheckbox();
+                    updateSelectionInfo();
+                });
+            });
+        }
+
+        document.getElementById('selectAll').addEventListener('change', function() {
+            var checkboxes = document.querySelectorAll('#tableBody .row-select');
+            var rows = document.querySelectorAll('#tableBody tr');
+            checkboxes.forEach(function(cb, i) {
+                cb.checked = this.checked;
+                if (this.checked) rows[i].classList.add('selected');
+                else rows[i].classList.remove('selected');
+            }.bind(this));
+            updateSelectionInfo();
+        });
+
+        function updateHeaderCheckbox() {
+            var all = document.querySelectorAll('#tableBody .row-select');
+            var checked = document.querySelectorAll('#tableBody .row-select:checked');
+            document.getElementById('selectAll').checked = (all.length > 0 && all.length === checked.length);
+        }
+
+        function updateSelectionInfo() {
+            var count = document.querySelectorAll('#tableBody .row-select:checked').length;
+            document.getElementById('selectionInfo').textContent = 'Selected: ' + count + ' rows';
+        }
+
+        function changePage(delta) {
+            var newPage = currentPage + delta;
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentPage = newPage;
+                renderTable();
+            }
+        }
+
+        function performAction(action, orderId) {
+            var notification = document.getElementById('notification');
+            notification.textContent = action + ' action performed on: ' + orderId;
+            notification.style.display = 'block';
+            setTimeout(function() { notification.style.display = 'none'; }, 3000);
+        }
+
+        renderTable();
+    </script>
+</body>
+</html>

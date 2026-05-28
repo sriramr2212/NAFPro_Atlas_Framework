@@ -1,0 +1,42 @@
+{
+  "_module": "AngularMaterialTable",
+  "TC_DEMO_ANGMAT_001": {
+    "ID": "TKT-201",
+    "Name": "Alice Johnson",
+    "Status": "Open",
+    "Department": "Engineering",
+    "Amount": "15000.00"
+  },
+  "TC_DEMO_ANGMAT_002": {
+    "ID": "TKT-203",
+    "Name": "Carol Williams",
+    "Status": "Open",
+    "Department": "Engineering",
+    "Amount": "22000.00"
+  },
+  "TC_DEMO_ANGMAT_003": {
+    "ID": "TKT-208",
+    "Name": "Henry Patel",
+    "Status": "Resolved",
+    "Department": "Engineering",
+    "Amount": "12000.00"
+  },
+  "TC_DEMO_ANGMAT_004": {
+    "ID": "TKT-210",
+    "Name": "James Wilson",
+    "Status": "Open",
+    "Department": "Engineering",
+    "Amount": "25000.00"
+  },
+  "TC_DEMO_ANGMAT_005": {
+    "ID": "TKT-201",
+    "Name": "Alice Johnson"
+  },
+  "TC_DEMO_ANGMAT_006": {
+    "ID": "TKT-213",
+    "Name": "Maria Santos",
+    "Status": "Open",
+    "Department": "Engineering",
+    "Amount": "28000.00"
+  }
+}

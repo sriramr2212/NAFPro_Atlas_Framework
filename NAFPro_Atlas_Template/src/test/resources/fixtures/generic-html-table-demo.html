@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Atlas v2.0 - Generic HTML Table Demo</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #1a1a2e; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: #16213e; color: white; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+        .pagination { margin-top: 15px; display: flex; gap: 5px; align-items: center; }
+        .pagination button { padding: 6px 12px; cursor: pointer; border: 1px solid #ccc; background: white; }
+        .pagination button.active { background: #16213e; color: white; }
+        .pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .status-active { color: #27ae60; font-weight: bold; }
+        .status-pending { color: #f39c12; font-weight: bold; }
+        .status-inactive { color: #e74c3c; font-weight: bold; }
+        button.action-btn { padding: 4px 10px; margin: 0 2px; cursor: pointer; border: 1px solid #3498db; background: #3498db; color: white; border-radius: 3px; }
+        button.action-btn:hover { background: #2980b9; }
+        #notification { display: none; padding: 10px; margin-top: 10px; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px; color: #155724; }
+    </style>
+</head>
+<body>
+    <h1>Customer Management System</h1>
+    <p>Atlas v2.0 Enterprise Table Engine - Generic HTML Demo</p>
+
+    <div id="customerTableContainer">
+        <div style="margin-bottom: 10px;">
+            <input type="search" id="globalSearch" placeholder="Search all columns..." oninput="applyGlobalSearch()" style="padding: 6px 12px; width: 250px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+        <table id="customerTable" role="grid">
+            <thead>
+                <tr>
+                    <th aria-sort="none" onclick="sortColumn(0)" style="cursor:pointer">Customer Name</th>
+                    <th aria-sort="none" onclick="sortColumn(1)" style="cursor:pointer">Email</th>
+                    <th aria-sort="none" onclick="sortColumn(2)" style="cursor:pointer">Product</th>
+                    <th aria-sort="none" onclick="sortColumn(3)" style="cursor:pointer">Status</th>
+                    <th aria-sort="none" onclick="sortColumn(4)" style="cursor:pointer">Premium</th>
+                    <th aria-sort="none" onclick="sortColumn(5)" style="cursor:pointer">Region</th>
+                    <th>Actions</th>
+                </tr>
+                <tr>
+                    <td><input data-column="Customer Name" placeholder="Filter Customer Name" oninput="applyColumnFilters()"></td>
+                    <td><input data-column="Email" placeholder="Filter Email" oninput="applyColumnFilters()"></td>
+                    <td><input data-column="Product" placeholder="Filter Product" oninput="applyColumnFilters()"></td>
+                    <td><input data-column="Status" placeholder="Filter Status" oninput="applyColumnFilters()"></td>
+                    <td><input data-column="Premium" placeholder="Filter Premium" oninput="applyColumnFilters()"></td>
+                    <td><input data-column="Region" placeholder="Filter Region" oninput="applyColumnFilters()"></td>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+            </tbody>
+        </table>
+        <nav class="pagination" aria-label="Table pagination">
+            <button class="prev" aria-label="Previous" onclick="changePage(-1)">Previous</button>
+            <span id="pageInfo">Page 1 of 3</span>
+            <button class="next" aria-label="Next" onclick="changePage(1)">Next</button>
+        </nav>
+    </div>
+
+    <div id="notification"></div>
+
+    <script>
+        var allData = [
+            // Page 1
+            { name: "Alice Johnson", email: "alice@techcorp.com", product: "Enterprise Suite", status: "Active", premium: "4500.00", region: "North America" },
+            { name: "Bob Martinez", email: "bob@globalinc.com", product: "Starter Plan", status: "Pending", premium: "1200.00", region: "Europe" },
+            { name: "Carol Williams", email: "carol@dataflow.io", product: "Professional", status: "Active", premium: "2800.00", region: "Asia Pacific" },
+            { name: "David Chen", email: "david@innovate.co", product: "Enterprise Suite", status: "Active", premium: "5200.00", region: "North America" },
+            { name: "Eva Schmidt", email: "eva@techstart.de", product: "Starter Plan", status: "Inactive", premium: "0.00", region: "Europe" },
+            // Page 2
+            { name: "Frank Okafor", email: "frank@nexgen.ng", product: "Professional", status: "Active", premium: "3100.00", region: "Africa" },
+            { name: "Grace Kim", email: "grace@seoultech.kr", product: "Enterprise Suite", status: "Pending", premium: "4800.00", region: "Asia Pacific" },
+            { name: "Henry Patel", email: "henry@cloudops.in", product: "Professional", status: "Active", premium: "2600.00", region: "Asia Pacific" },
+            { name: "Irene Costa", email: "irene@latamsoft.br", product: "Starter Plan", status: "Active", premium: "1500.00", region: "South America" },
+            { name: "James Wilson", email: "james@finserv.uk", product: "Enterprise Suite", status: "Active", premium: "6200.00", region: "Europe" },
+            // Page 3
+            { name: "Karen Tanaka", email: "karen@jptech.jp", product: "Professional", status: "Active", premium: "3400.00", region: "Asia Pacific" },
+            { name: "Leo Rossi", email: "leo@eurodata.it", product: "Starter Plan", status: "Pending", premium: "1100.00", region: "Europe" },
+            { name: "Maria Santos", email: "maria@cloudla.mx", product: "Enterprise Suite", status: "Active", premium: "4900.00", region: "South America" },
+            { name: "Nathan Brooks", email: "nathan@usatech.com", product: "Professional", status: "Inactive", premium: "0.00", region: "North America" },
+            { name: "Olivia Zhang", email: "olivia@shenzhen.cn", product: "Enterprise Suite", status: "Active", premium: "5500.00", region: "Asia Pacific" }
+        ];
+
+        var pageSize = 5;
+        var currentPage = 1;
+        var filteredData = allData.slice();
+        var totalPages = Math.ceil(filteredData.length / pageSize);
+        var sortCol = -1;
+        var sortDir = 'none'; // none, ascending, descending
+
+        function sortColumn(colIndex) {
+            var headers = document.querySelectorAll('#customerTable thead tr:first-child th');
+            var oldDir = headers[colIndex].getAttribute('aria-sort');
+            // Reset all
+            headers.forEach(function(h) { h.setAttribute('aria-sort', 'none'); });
+            // Cycle: none -> ascending -> descending -> none
+            if (oldDir === 'none') sortDir = 'ascending';
+            else if (oldDir === 'ascending') sortDir = 'descending';
+            else sortDir = 'none';
+            headers[colIndex].setAttribute('aria-sort', sortDir);
+            sortCol = colIndex;
+            applySort();
+            currentPage = 1;
+            renderTable();
+        }
+
+        function applySort() {
+            if (sortDir === 'none') { applyColumnFilters(); return; }
+            var keys = ['name','email','product','status','premium','region'];
+            var key = keys[sortCol];
+            filteredData.sort(function(a, b) {
+                var va = a[key], vb = b[key];
+                if (key === 'premium') { va = parseFloat(va); vb = parseFloat(vb); }
+                else { va = va.toLowerCase(); vb = vb.toLowerCase(); }
+                var cmp = va < vb ? -1 : va > vb ? 1 : 0;
+                return sortDir === 'descending' ? -cmp : cmp;
+            });
+        }
+
+        function applyColumnFilters() {
+            var inputs = document.querySelectorAll('#customerTable thead tr:nth-child(2) input');
+            var keys = ['name','email','product','status','premium','region'];
+            filteredData = allData.filter(function(row) {
+                for (var i = 0; i < inputs.length; i++) {
+                    var val = inputs[i].value.toLowerCase();
+                    if (val && !row[keys[i]].toLowerCase().includes(val)) return false;
+                }
+                return true;
+            });
+            applyGlobalSearchFilter();
+            applySort();
+            currentPage = 1;
+            totalPages = Math.ceil(filteredData.length / pageSize) || 1;
+            renderTable();
+        }
+
+        function applyGlobalSearch() {
+            applyColumnFilters();
+        }
+
+        function applyGlobalSearchFilter() {
+            var search = document.getElementById('globalSearch').value.toLowerCase();
+            if (!search) return;
+            filteredData = filteredData.filter(function(row) {
+                return row.name.toLowerCase().includes(search) ||
+                       row.email.toLowerCase().includes(search) ||
+                       row.product.toLowerCase().includes(search) ||
+                       row.status.toLowerCase().includes(search) ||
+                       row.premium.toLowerCase().includes(search) ||
+                       row.region.toLowerCase().includes(search);
+            });
+        }
+
+        function renderTable() {
+            totalPages = Math.ceil(filteredData.length / pageSize) || 1;
+            var tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            var start = (currentPage - 1) * pageSize;
+            var end = Math.min(start + pageSize, filteredData.length);
+
+            for (var i = start; i < end; i++) {
+                var row = filteredData[i];
+                var statusClass = 'status-' + row.status.toLowerCase();
+                var tr = document.createElement('tr');
+                tr.setAttribute('data-row-id', i + 1);
+                tr.innerHTML =
+                    '<td>' + row.name + '</td>' +
+                    '<td>' + row.email + '</td>' +
+                    '<td>' + row.product + '</td>' +
+                    '<td><span class="' + statusClass + '">' + row.status + '</span></td>' +
+                    '<td>' + row.premium + '</td>' +
+                    '<td>' + row.region + '</td>' +
+                    '<td>' +
+                        '<button class="action-btn" data-action="Edit" title="Edit" onclick="performAction(\'Edit\', \'' + row.name + '\')">Edit</button>' +
+                        '<button class="action-btn" data-action="View" title="View" onclick="performAction(\'View\', \'' + row.name + '\')">View</button>' +
+                        '<button class="action-btn" data-action="Delete" aria-label="Delete" onclick="performAction(\'Delete\', \'' + row.name + '\')">Delete</button>' +
+                    '</td>';
+                tbody.appendChild(tr);
+            }
+
+            document.getElementById('pageInfo').textContent = 'Page ' + currentPage + ' of ' + totalPages;
+            document.querySelector('.prev').disabled = (currentPage === 1);
+            document.querySelector('.next').disabled = (currentPage === totalPages);
+        }
+
+        function changePage(delta) {
+            var newPage = currentPage + delta;
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentPage = newPage;
+                renderTable();
+            }
+        }
+
+        function performAction(action, customerName) {
+            var notification = document.getElementById('notification');
+            notification.textContent = action + ' action performed on: ' + customerName;
+            notification.style.display = 'block';
+            setTimeout(function() { notification.style.display = 'none'; }, 3000);
+        }
+
+        // Observe filter inputs for programmatic value changes
+        var filterInputs = document.querySelectorAll('#customerTable thead tr:nth-child(2) input');
+        filterInputs.forEach(function(input) {
+            var desc = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value');
+            var originalSet = desc.set;
+            Object.defineProperty(input, 'value', {
+                set: function(val) {
+                    originalSet.call(this, val);
+                    this.dispatchEvent(new Event('input', { bubbles: true }));
+                },
+                get: function() { return desc.get.call(this); }
+            });
+        });
+        var globalInput = document.getElementById('globalSearch');
+        var gDesc = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value');
+        var gOriginalSet = gDesc.set;
+        Object.defineProperty(globalInput, 'value', {
+            set: function(val) {
+                gOriginalSet.call(this, val);
+                this.dispatchEvent(new Event('input', { bubbles: true }));
+            },
+            get: function() { return gDesc.get.call(this); }
+        });
+
+        renderTable();
+    </script>
+</body>
+</html>

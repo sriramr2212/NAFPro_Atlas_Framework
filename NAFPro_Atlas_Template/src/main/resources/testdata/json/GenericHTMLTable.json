@@ -1,0 +1,65 @@
+{
+  "_module": "GenericHTMLTable",
+  "TC_DEMO_GENERIC_001": {
+    "CustomerName": "Alice Johnson",
+    "Status": "Active",
+    "Product": "Enterprise Suite",
+    "Premium": "4500.00",
+    "Region": "North America"
+  },
+  "TC_DEMO_GENERIC_002": {
+    "CustomerName": "Bob Martinez",
+    "Status": "Pending",
+    "Product": "Starter Plan",
+    "Premium": "1200.00",
+    "Region": "Europe"
+  },
+  "TC_DEMO_GENERIC_003": {
+    "CustomerName": "James Wilson",
+    "Status": "Active",
+    "Product": "Enterprise Suite",
+    "Premium": "6200.00",
+    "Region": "Europe"
+  },
+  "TC_DEMO_GENERIC_004": {
+    "CustomerName": "Carol Williams",
+    "Product": "Professional",
+    "Region": "Asia Pacific"
+  },
+  "TC_DEMO_GENERIC_005": {
+    "CustomerName": "Alice Johnson"
+  },
+  "TC_DEMO_GENERIC_006": {
+    "ID": "Maria Santos",
+    "CustomerName": "Maria Santos",
+    "Name": "Maria Santos",
+    "Status": "Active",
+    "Department": "South America",
+    "Amount": "4900.00",
+    "Product": "Enterprise Suite",
+    "Region": "South America",
+    "Premium": "4900.00"
+  },
+  "TC_DEMO_GENERIC_SF_001": {
+    "CustomerName": "Alice Johnson"
+  },
+  "TC_DEMO_GENERIC_SF_002": {
+    "CustomerName": "Alice Johnson"
+  },
+  "TC_DEMO_GENERIC_SF_003": {
+    "FilterStatus": "Active",
+    "VisibleCustomer": "Alice Johnson",
+    "ExcludedStatus": "Pending"
+  },
+  "TC_DEMO_GENERIC_SF_004": {
+    "SearchTerm": "Enterprise",
+    "ExpectedCustomer": "Alice Johnson",
+    "ExcludedCustomer": "Bob Martinez"
+  },
+  "TC_DEMO_GENERIC_SF_005": {
+    "CustomerName": "Alice Johnson"
+  },
+  "TC_DEMO_GENERIC_SF_006": {
+    "CustomerName": "Alice Johnson"
+  }
+}

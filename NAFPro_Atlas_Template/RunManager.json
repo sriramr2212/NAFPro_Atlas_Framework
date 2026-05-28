@@ -1,0 +1,45 @@
+{
+  "projectName": "NAFPro Atlas Template",
+  "environment": "qa",
+  "environmentURL": "about:blank",
+  "selectedSuite": "Demo_All",
+  "testSuites": {
+    "Demo_All": "@Demo",
+    "Demo_Web": "@Demo and not @Desktop",
+    "Demo_GenericHTML": "@GenericHTML",
+    "Demo_AGGrid": "@AGGrid",
+    "Demo_AntD": "@AntD",
+    "Demo_PrimeNG": "@PrimeNG",
+    "Demo_AngularMaterial": "@AngularMaterial",
+    "Demo_MUI": "@MUI",
+    "Demo_SortFilter": "@SortFilter",
+    "Demo_Selection_State": "@SelectionState",
+    "Demo_Expander_Editor": "@ExpanderEditor",
+    "Demo_Desktop": "@Desktop",
+    "Demo_RCA": "@RCA",
+    "Demo_DefectWriter": "@DefectWriter",
+    "Atlas_Proof": "@AtlasProof"
+  },
+  "includeTags": "",
+  "excludeTags": "",
+  "browser": "chrome",
+  "parallelExecution": false,
+  "threads": 1,
+  "testDataSource": "json",
+  "strictDataValidation": false,
+  "testDataLogLevel": "INFO",
+  "reporting": {
+    "captureScreenshotsOnPass": true,
+    "captureScreenshotsOnFailure": true
+  },
+  "executionMode": "web",
+  "demoMode": false,
+  "demoActionDelayMs": 800,
+  "rcaEnabled": true,
+  "defectWriterEnabled": true,
+  "desktopConfig": {
+    "applicationPath": "Microsoft.WindowsCalculator_8wekyb3d8bbwe!App",
+    "launchTimeoutSeconds": 30,
+    "reuseSession": true
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "_module": "GenericHTMLExpanderEditor",
+  "TC_DEMO_GENERIC_EE_001": {
+    "TaskId": "TSK-001",
+    "DetailText": "RESTful API schema"
+  },
+  "TC_DEMO_GENERIC_EE_002": {
+    "TaskId": "TSK-002"
+  },
+  "TC_DEMO_GENERIC_EE_003": {
+    "TaskId": "TSK-003"
+  },
+  "TC_DEMO_GENERIC_EE_004": {
+    "TaskId": "TSK-001",
+    "NewName": "Design REST API v2"
+  },
+  "TC_DEMO_GENERIC_EE_005": {
+    "TaskId": "TSK-003",
+    "NewPriority": "High"
+  },
+  "TC_DEMO_GENERIC_EE_006": {
+    "TaskId": "TSK-005"
+  }
+}

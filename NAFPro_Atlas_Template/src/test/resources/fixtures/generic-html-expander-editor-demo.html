@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Atlas v2.2-P2 - Generic HTML Expander + Editor Demo</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #1a1a2e; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #16213e; color: white; }
+        tr:nth-child(even) { background-color: #f8f8f8; }
+        .expand-btn { cursor: pointer; background: none; border: 1px solid #999; border-radius: 3px; width: 24px; height: 24px; font-size: 14px; }
+        .detail-row { background: #f0f7ff; }
+        .detail-row td { padding: 12px 20px; }
+        .detail-content { font-size: 13px; color: #333; }
+        .editable { background: #fffde7; cursor: pointer; }
+        .readonly { background: #f5f5f5; color: #666; }
+        td input[type="text"] { width: 90%; padding: 4px; border: 1px solid #2196F3; border-radius: 3px; }
+        td select { width: 95%; padding: 4px; border: 1px solid #2196F3; border-radius: 3px; }
+        td input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+        #notification { display: none; padding: 10px; margin-top: 10px; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px; color: #155724; }
+    </style>
+</head>
+<body>
+    <h1>Project Task Manager</h1>
+    <p>Atlas v2.2 Phase 2 - Expander + Editor Demo (Generic HTML)</p>
+
+    <table id="taskTable" role="grid">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Task ID</th>
+                <th>Task Name</th>
+                <th>Assignee</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Completed</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
+
+    <div id="notification"></div>
+
+    <script>
+        var tasks = [
+            { id: "TSK-001", name: "Design API Schema", assignee: "Alice Johnson", priority: "High", status: "In Progress", completed: false, detail: "Design RESTful API schema for the order management module. Includes endpoint definitions, request/response models, and error handling patterns." },
+            { id: "TSK-002", name: "Implement Auth Service", assignee: "Bob Martinez", priority: "Critical", status: "In Progress", completed: false, detail: "Build OAuth2 authentication service with JWT token management. Supports refresh tokens and role-based access control." },
+            { id: "TSK-003", name: "Write Unit Tests", assignee: "Carol Williams", priority: "Medium", status: "To Do", completed: false, detail: "Create comprehensive unit test suite for payment processing module. Target 90% code coverage with edge case handling." },
+            { id: "TSK-004", name: "Database Migration", assignee: "David Chen", priority: "High", status: "Done", completed: true, detail: "Migrate legacy PostgreSQL schema to new normalized structure. Includes data transformation scripts and rollback procedures." },
+            { id: "TSK-005", name: "Performance Audit", assignee: "Eva Schmidt", priority: "Low", status: "To Do", completed: false, detail: "Conduct full performance audit of dashboard rendering. Identify bottlenecks in React component tree and API response times." }
+        ];
+
+        var priorities = ["Low", "Medium", "High", "Critical"];
+        var expandedRows = {};
+
+        function renderTable() {
+            var tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            tasks.forEach(function(task, idx) {
+                // Data row
+                var tr = document.createElement('tr');
+                tr.setAttribute('data-row-id', task.id);
+                var expanded = expandedRows[task.id] || false;
+                tr.innerHTML =
+                    '<td><button class="expand-btn" aria-label="expand" onclick="toggleExpand(\'' + task.id + '\')">' + (expanded ? '−' : '+') + '</button></td>' +
+                    '<td class="readonly">' + task.id + '</td>' +
+                    '<td class="editable" data-editable="true" ondblclick="editText(this, ' + idx + ', \'name\')">' + task.name + '</td>' +
+                    '<td class="readonly">' + task.assignee + '</td>' +
+                    '<td class="editable" data-editable="true" ondblclick="editDropdown(this, ' + idx + ', \'priority\')">' + task.priority + '</td>' +
+                    '<td class="readonly">' + task.status + '</td>' +
+                    '<td class="editable" data-editable="true"><input type="checkbox" ' + (task.completed ? 'checked' : '') + ' onchange="toggleCompleted(' + idx + ', this.checked)"></td>';
+                tbody.appendChild(tr);
+
+                // Detail row (hidden by default)
+                var detailTr = document.createElement('tr');
+                detailTr.className = 'detail-row';
+                detailTr.setAttribute('data-detail-for', task.id);
+                detailTr.style.display = expanded ? '' : 'none';
+                detailTr.innerHTML = '<td colspan="7"><div class="detail-content"><strong>Description:</strong> ' + task.detail + '</div></td>';
+                tbody.appendChild(detailTr);
+            });
+        }
+
+        function toggleExpand(taskId) {
+            expandedRows[taskId] = !expandedRows[taskId];
+            renderTable();
+        }
+
+        function editText(cell, idx, field) {
+            var currentValue = tasks[idx][field];
+            cell.innerHTML = '<input type="text" value="' + currentValue + '" onblur="commitTextEdit(this, ' + idx + ', \'' + field + '\')" onkeydown="if(event.key===\'Enter\')this.blur()">';
+            cell.querySelector('input').focus();
+        }
+
+        function commitTextEdit(input, idx, field) {
+            tasks[idx][field] = input.value;
+            renderTable();
+            showNotification('Updated ' + field + ' to: ' + input.value);
+        }
+
+        function editDropdown(cell, idx, field) {
+            var currentValue = tasks[idx][field];
+            var options = priorities.map(function(p) {
+                return '<option value="' + p + '"' + (p === currentValue ? ' selected' : '') + '>' + p + '</option>';
+            }).join('');
+            cell.innerHTML = '<select onchange="commitDropdownEdit(this, ' + idx + ', \'' + field + '\')" onblur="commitDropdownEdit(this, ' + idx + ', \'' + field + '\')">' + options + '</select>';
+            cell.querySelector('select').focus();
+        }
+
+        function commitDropdownEdit(select, idx, field) {
+            tasks[idx][field] = select.value;
+            renderTable();
+            showNotification('Updated ' + field + ' to: ' + select.value);
+        }
+
+        function toggleCompleted(idx, checked) {
+            tasks[idx].completed = checked;
+            if (checked) tasks[idx].status = 'Done';
+            showNotification('Task ' + tasks[idx].id + ' completed: ' + checked);
+        }
+
+        function showNotification(msg) {
+            var el = document.getElementById('notification');
+            el.textContent = msg;
+            el.style.display = 'block';
+            setTimeout(function() { el.style.display = 'none'; }, 3000);
+        }
+
+        renderTable();
+    </script>
+</body>
+</html>

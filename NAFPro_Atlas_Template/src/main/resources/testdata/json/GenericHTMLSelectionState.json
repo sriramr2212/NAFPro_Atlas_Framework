@@ -1,0 +1,23 @@
+{
+  "_module": "GenericHTMLSelectionState",
+  "TC_DEMO_GENERIC_SS_001": {
+    "OrderId": "ORD-001"
+  },
+  "TC_DEMO_GENERIC_SS_002": {
+    "OrderId1": "ORD-001",
+    "OrderId2": "ORD-002",
+    "OrderId3": "ORD-003"
+  },
+  "TC_DEMO_GENERIC_SS_003": {
+    "OrderId": "ORD-001"
+  },
+  "TC_DEMO_GENERIC_SS_004": {
+    "OrderId": "ORD-001"
+  },
+  "TC_DEMO_GENERIC_SS_005": {
+    "EmptyMessage": "No records found"
+  },
+  "TC_DEMO_GENERIC_SS_006": {
+    "OrderId": "ORD-001"
+  }
+}

@@ -19,6 +19,7 @@
     "Demo_RCA": "@RCA",
     "Demo_DefectWriter": "@DefectWriter",
     "Demo_REST": "@REST",
+    "Demo_REST_Hybrid": "@REST_Hybrid",
     "Atlas_Proof": "@AtlasProof"
   },
   "includeTags": "",

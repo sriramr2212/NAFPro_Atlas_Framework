@@ -13,10 +13,14 @@ import novac.reporting.StepDescription;
 import novac.reporting.StepReportingWrapper;
 import novac.utils.TestContext;
 import novac.utils.TestDataManager;
+import novac.wrapper.GenericWrapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.Cookie;
+import org.openqa.selenium.WebDriver;
 
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 public class DemoRestSteps {
@@ -127,6 +131,30 @@ public class DemoRestSteps {
     public void setBaseUrl(String url) {
         StepReportingWrapper.executeStep("Set base URL: " + url, () -> {
             ApiContext.setBaseUrl(url);
+        });
+    }
+
+    // ── Hybrid: Cookie Extraction ─────────────────────────────────────────────
+
+    @Given("I extract session cookies from browser")
+    @StepDescription("Extract cookies from browser session for REST API calls")
+    public void extractSessionCookies() {
+        StepReportingWrapper.executeStep("Extract session cookies from browser", () -> {
+            WebDriver driver = GenericWrapper.getDriver();
+            if (driver == null) {
+                throw new RuntimeException("[DemoRestSteps] WebDriver is null — cannot extract cookies. Ensure browser is initialized (hybrid mode).");
+            }
+            Set<Cookie> cookies = driver.manage().getCookies();
+            if (cookies.isEmpty()) {
+                throw new RuntimeException("[DemoRestSteps] No cookies found in browser session. Login may have failed.");
+            }
+            StringBuilder cookieHeader = new StringBuilder();
+            for (Cookie cookie : cookies) {
+                if (cookieHeader.length() > 0) cookieHeader.append("; ");
+                cookieHeader.append(cookie.getName()).append("=").append(cookie.getValue());
+            }
+            ApiContext.setSessionHeader("Cookie", cookieHeader.toString());
+            logger.info("[REST Hybrid] Extracted {} cookies from browser session", cookies.size());
         });
     }
 

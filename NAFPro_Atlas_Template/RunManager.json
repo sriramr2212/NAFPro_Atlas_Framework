@@ -18,6 +18,7 @@
     "Demo_Desktop": "@Desktop",
     "Demo_RCA": "@RCA",
     "Demo_DefectWriter": "@DefectWriter",
+    "Demo_REST": "@REST",
     "Atlas_Proof": "@AtlasProof"
   },
   "includeTags": "",

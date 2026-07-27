@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NAFPro Atlas Spark — AI-Powered Test Generation</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--primary:#1B2A4A;--accent:#0EA5E9;--accent2:#06B6D4;--gold:#D4920B;--bg:#FAFBFC;--card:#FFF;--text:#1F2937;--muted:#6B7280;--border:#E5E7EB;--success:#10B981;--warning:#F59E0B;--danger:#EF4444;--radius:16px;--shadow:0 4px 24px rgba(0,0,0,.06)}
+html{scroll-behavior:smooth}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+.container{max-width:900px;margin:0 auto;padding:0 40px}
+section{padding:80px 0}
+h1{font-size:clamp(2.2rem,4vw,3.2rem);font-weight:800;color:var(--primary);letter-spacing:-.02em}
+h2{font-size:clamp(1.5rem,2.5vw,2rem);font-weight:700;color:var(--primary);margin-bottom:12px}
+h3{font-size:1.15rem;font-weight:600;color:var(--primary);margin-bottom:8px}
+p{color:var(--muted);font-size:1.05rem;margin-bottom:12px}
+.tag{display:inline-block;background:linear-gradient(135deg,var(--gold),#E5A50C);color:#fff;padding:6px 16px;border-radius:20px;font-size:.78rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:16px}
+
+/* HERO */
+.hero{padding:180px 0 80px;text-align:center;background:linear-gradient(180deg,#FFFBEB 0%,var(--bg) 100%)}
+.hero .spark-badge{display:inline-block;background:linear-gradient(135deg,var(--gold),#E5A50C);color:#fff;padding:8px 24px;border-radius:24px;font-size:.85rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:20px}
+.hero h1{margin-bottom:12px}
+.hero .subtitle{font-size:1.25rem;color:var(--gold);font-weight:600;margin-bottom:8px}
+.hero .desc{font-size:1.05rem;color:var(--muted);max-width:560px;margin:0 auto 40px}
+.hero-outputs{display:flex;justify-content:center;gap:16px;flex-wrap:wrap}
+.hero-output{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 24px;font-size:.9rem;font-weight:600;color:var(--primary);box-shadow:var(--shadow)}
+.hero-output::before{content:'✅ ';color:var(--success)}
+
+/* FLOW */
+.flow-section{background:var(--card);border-radius:var(--radius);padding:48px;box-shadow:var(--shadow);border:1px solid var(--border);margin-top:40px}
+.flow-steps{display:flex;flex-direction:column;align-items:center;gap:0}
+.flow-step{background:#F8FAFC;border:2px solid var(--border);border-radius:12px;padding:16px 32px;font-weight:600;font-size:1rem;color:var(--primary);width:100%;max-width:400px;text-align:center;transition:all .2s}
+.flow-step:hover{border-color:var(--accent);background:#F0F9FF}
+.flow-step.highlight{background:linear-gradient(135deg,var(--primary),#2D3F63);color:#fff;border-color:var(--gold);font-size:1.1rem;padding:20px 32px}
+.flow-arrow{color:var(--muted);font-size:1.5rem;margin:6px 0}
+
+/* STEPS */
+.guide-steps{margin-top:48px}
+.guide-step{display:grid;grid-template-columns:60px 1fr;gap:24px;margin-bottom:48px;align-items:start}
+.guide-step-num{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#E5A50C);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:800;flex-shrink:0}
+.guide-step-content h3{font-size:1.2rem;margin-bottom:6px}
+.guide-step-content p{font-size:.95rem}
+
+/* COMMANDS */
+.cmd-card{background:var(--card);border-radius:var(--radius);padding:28px;box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:16px}
+.cmd-card h3{font-size:1rem;margin-bottom:8px;color:var(--primary)}
+.cmd-card .cmd-desc{font-size:.9rem;color:var(--muted);margin-bottom:12px}
+.cmd-box{background:#1E293B;border-radius:10px;padding:16px 20px;font-family:'Cascadia Code','Fira Code',monospace;font-size:.85rem;color:#E2E8F0;overflow-x:auto;position:relative}
+.cmd-box::before{content:'$';color:var(--accent);margin-right:8px;font-weight:700}
+
+/* OUTPUT STRUCTURE */
+.output-tree{background:#1E293B;border-radius:var(--radius);padding:32px;font-family:'Cascadia Code','Fira Code',monospace;font-size:.9rem;color:#E2E8F0;line-height:2}
+.output-tree .folder{color:var(--accent)}
+.output-tree .file{color:#FCD34D}
+.output-tree .desc{color:#94A3B8;font-style:italic;font-size:.8rem}
+
+/* READINESS */
+.readiness-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:32px}
+.readiness-card{border-radius:var(--radius);padding:28px;text-align:center;border:2px solid}
+.readiness-card.ready{background:#ECFDF5;border-color:#A7F3D0}
+.readiness-card.review{background:#FFFBEB;border-color:#FDE68A}
+.readiness-card.low{background:#FEF2F2;border-color:#FECACA}
+.readiness-card .score{font-size:2rem;font-weight:800;margin-bottom:4px}
+.readiness-card.ready .score{color:#065F46}
+.readiness-card.review .score{color:#92400E}
+.readiness-card.low .score{color:#991B1B}
+.readiness-card .status{font-size:.9rem;font-weight:600;margin-bottom:8px}
+.readiness-card .desc{font-size:.82rem;color:var(--muted)}
+
+/* BEST PRACTICES */
+.practices{margin-top:32px}
+.practice-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.practice-item:last-child{border-bottom:none}
+.practice-icon{font-size:1.2rem;flex-shrink:0;margin-top:2px}
+.practice-text{font-size:.95rem;color:var(--text)}
+
+/* FOOTER */
+footer{text-align:center;padding:48px 0;border-top:1px solid var(--border);color:var(--muted);font-size:.85rem}
+footer img{height:36px;margin-bottom:12px;opacity:.7}
+footer a{color:var(--accent);text-decoration:none;font-weight:500}
+footer a:hover{text-decoration:underline}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);z-index:100;border-bottom:1px solid var(--border);padding:20px 0}
+nav .container{display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;padding:0 40px}
+nav img{height:100px}
+nav a{color:var(--muted);text-decoration:none;font-size:.9rem;font-weight:500;margin-left:28px;transition:color .2s}
+nav a:hover{color:var(--primary)}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  section{padding:48px 0}
+  .container{padding:0 20px}
+  .hero{padding:140px 0 48px}
+  .hero img{height:72px}
+  .guide-step{grid-template-columns:1fr;gap:12px}
+  .hero-outputs{flex-direction:column;align-items:center}
+  nav a{display:none}
+}
+@media print{section{padding:32px 0;page-break-inside:avoid}}
+
+/* SCREENSHOT FRAMES */
+.screenshot-frame{border-radius:12px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.12);border:1px solid var(--border);margin-top:32px}
+.screenshot-titlebar{background:#E5E7EB;padding:10px 16px;display:flex;align-items:center;gap:8px}
+.screenshot-dot{width:12px;height:12px;border-radius:50%;display:inline-block}
+.screenshot-dot.red{background:#EF4444}
+.screenshot-dot.yellow{background:#F59E0B}
+.screenshot-dot.green{background:#10B981}
+.screenshot-title{margin-left:12px;font-size:.8rem;font-weight:600;color:var(--muted)}
+.screenshot-body{background:#FAFBFC;padding:24px 28px}
+
+/* FILE EXPLORER */
+.file-explorer{font-family:'Segoe UI',system-ui,sans-serif;font-size:.9rem}
+.file-row{padding:8px 12px;border-radius:8px;display:flex;align-items:center;gap:10px;transition:background .15s}
+.file-row:hover{background:#F0F4F8}
+.folder-row{font-weight:600;color:var(--primary)}
+.indent-1{padding-left:28px}
+.indent-2{padding-left:56px}
+.fe-icon{font-size:1.1rem}
+.fe-name{flex:1;color:var(--text)}
+.fe-name.feature{color:#059669}
+.fe-name.json{color:#D97706}
+.fe-name.java{color:#7C3AED}
+.fe-name.review{color:#0EA5E9}
+.fe-name.meta{color:#9CA3AF}
+.fe-size{font-size:.75rem;color:#9CA3AF;min-width:48px;text-align:right}
+.fe-badge{font-size:.68rem;font-weight:600;padding:2px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:.3px}
+.fe-badge.ready{background:#ECFDF5;color:#065F46}
+.fe-badge.data{background:#FFFBEB;color:#92400E}
+.fe-badge.template{background:#F5F3FF;color:#5B21B6}
+.fe-badge.review-badge{background:#EFF6FF;color:#1E40AF}
+.fe-badge.meta-badge{background:#F3F4F6;color:#6B7280}
+
+/* REVIEW PREVIEW */
+.review-preview{font-size:.85rem;line-height:1.6}
+.rp-header{font-size:1.1rem;font-weight:700;color:var(--primary);margin-bottom:4px}
+.rp-meta{font-size:.78rem;color:var(--muted);margin-bottom:12px}
+.rp-divider{height:1px;background:var(--border);margin:12px 0}
+.rp-section-title{font-size:.82rem;font-weight:700;color:var(--primary);margin:16px 0 8px;text-transform:uppercase;letter-spacing:.3px}
+.rp-table{border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.rp-row{display:grid;grid-template-columns:1fr 2fr 1fr;padding:8px 12px;border-bottom:1px solid var(--border);font-size:.8rem}
+.rp-row:last-child{border-bottom:none}
+.rp-row-header{background:#F8FAFC;font-weight:600;color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.5px}
+.rp-status-ready{color:#059669;font-weight:600}
+.rp-status-warn{color:#D97706;font-weight:600}
+.rp-stats{display:flex;gap:24px;font-size:.85rem;color:var(--muted)}
+.rp-stats strong{color:var(--primary)}
+.rp-score-box{display:flex;align-items:center;gap:16px;background:#ECFDF5;border:2px solid #A7F3D0;border-radius:10px;padding:12px 20px;margin:8px 0}
+.rp-score{font-size:2rem;font-weight:800;color:#065F46}
+.rp-score-label{font-size:.9rem;font-weight:600;color:#059669}
+.rp-reuse-grid{display:flex;gap:24px;margin:8px 0}
+.rp-reuse-item{text-align:center}
+.rp-reuse-num{display:block;font-size:1.4rem;font-weight:800;color:var(--primary)}
+.rp-reuse-label{font-size:.72rem;color:var(--muted);text-transform:uppercase}
+.rp-step-list{border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.rp-step-row{display:flex;justify-content:space-between;align-items:center;padding:6px 12px;border-bottom:1px solid var(--border);font-size:.78rem}
+.rp-step-row:last-child{border-bottom:none}
+.rp-step-row:nth-child(odd){background:#F8FAFC}
+.rp-step-row code{font-family:'Cascadia Code','Fira Code',monospace;font-size:.72rem;color:#7C3AED;background:#F5F3FF;padding:2px 6px;border-radius:4px}
+.rp-count{font-weight:700;color:var(--accent);font-size:.75rem}
+</style>
+</head>
+<body>
+
+<nav>
+<div class="container">
+<img src="../src/main/resources/assets/nafpro_logo.png" alt="NAFPro Atlas">
+<div>
+<a href="NAFPro_Atlas_Architecture_Portal.html#architecture">Architecture</a>
+<a href="NAFPro_Atlas_Architecture_Portal.html#features">Features</a>
+<a href="NAFPro_Atlas_Spark_Guide.html">AI Spark</a>
+<a href="NAFPro_Atlas_Architecture_Portal.html#integration">Integration</a>
+<a href="NAFPro_Atlas_Architecture_Portal.html#onboarding">Onboarding</a>
+<a href="NAFPro_Atlas_Architecture_Portal.html#proof">Proof</a>
+</div>
+</div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+<div class="container">
+<div class="spark-badge">⚡ AI Spark</div>
+<h1>NAFPro Atlas Spark</h1>
+<p class="subtitle">AI-powered BRD to automation-ready assets in minutes.</p>
+<p class="desc">Spark uses AI to accelerate shift-left QA — converting requirements into feature files, test data, and constants aligned to your existing reusable steps. No manual scenario writing needed.</p>
+<div class="hero-outputs">
+<div class="hero-output">Feature Files</div>
+<div class="hero-output">Test Data</div>
+<div class="hero-output">Constants Templates</div>
+<div class="hero-output">Readiness Report</div>
+</div>
+</div>
+</section>
+
+<!-- WHAT IS SPARK -->
+<section>
+<div class="container">
+<span class="tag">Overview</span>
+<h2>What is Spark?</h2>
+<p>Spark is an AI-powered NAFPro Atlas capability that accelerates test automation from requirements.</p>
+<p>Instead of manually writing scenarios and Gherkin from a BRD, Spark's AI pipeline analyzes your requirements, generates intelligent test scenarios, and produces automation-ready outputs using your existing NAFPro Atlas reusable steps — so generated feature files work with your framework immediately.</p>
+
+<div class="flow-section">
+<div class="flow-steps">
+<div class="flow-step">📄 BRD / Requirement</div>
+<div class="flow-arrow">↓</div>
+<div class="flow-step">🔍 AI Flow Analysis</div>
+<div class="flow-arrow">↓</div>
+<div class="flow-step">📋 AI Scenario Generation</div>
+<div class="flow-arrow">↓</div>
+<div class="flow-step highlight">⚡ AI Gherkin Creation (using your reusable steps)</div>
+<div class="flow-arrow">↓</div>
+<div class="flow-step">✅ Feature File + Test Data + Constants</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section>
+<div class="container">
+<span class="tag">How It Works</span>
+<h2>Three Simple Steps</h2>
+
+<div class="guide-steps">
+<div class="guide-step">
+<div class="guide-step-num">1</div>
+<div class="guide-step-content">
+<h3>Provide a BRD</h3>
+<p>Point Spark to your BRD file and specify the module name. Spark's AI reads the requirements and begins intelligent flow analysis.</p>
+</div>
+</div>
+
+<div class="guide-step">
+<div class="guide-step-num">2</div>
+<div class="guide-step-content">
+<h3>AI Generates Preview</h3>
+<p>Spark's AI pipeline creates preview assets in a safe location — nothing touches your framework folders yet. You get an AI-generated feature file, test data, constants template, and a readiness summary.</p>
+</div>
+</div>
+
+<div class="guide-step">
+<div class="guide-step-num">3</div>
+<div class="guide-step-content">
+<h3>Review & Apply</h3>
+<p>Review the generated files and the REVIEW.md summary. If satisfied, run the apply command. Spark moves approved files into your NAFPro Atlas project folders.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- COMMANDS -->
+<section>
+<div class="container">
+<span class="tag">Commands</span>
+<h2>Running Spark</h2>
+<p>All commands run via Maven. Copy and adapt these examples.</p>
+
+<div class="cmd-card">
+<h3>Generate from BRD</h3>
+<p class="cmd-desc">Start the AI pipeline — generates the first stage AI analysis prompt from your BRD.</p>
+<div class="cmd-box">mvn exec:java -Dexec.mainClass=novac.ai.spark.SparkRunner "-Dexec.args=--brd docs/MyModule.md --module MyModule"</div>
+</div>
+
+<div class="cmd-card">
+<h3>Finalize AI Output</h3>
+<p class="cmd-desc">After running all 3 AI stages, finalize the output into preview assets.</p>
+<div class="cmd-box">mvn exec:java -Dexec.mainClass=novac.ai.spark.SparkRunner "-Dexec.args=--finalize gherkin-output.json --module MyModule"</div>
+</div>
+
+<div class="cmd-card">
+<h3>Apply to Framework</h3>
+<p class="cmd-desc">Move reviewed assets from preview into your project folders.</p>
+<div class="cmd-box">mvn exec:java -Dexec.mainClass=novac.ai.spark.SparkRunner "-Dexec.args=--apply MyModule"</div>
+</div>
+
+<div class="cmd-card">
+<h3>Check Status</h3>
+<p class="cmd-desc">See which modules have pending reviews.</p>
+<div class="cmd-box">mvn exec:java -Dexec.mainClass=novac.ai.spark.SparkRunner "-Dexec.args=--status"</div>
+</div>
+
+<div class="cmd-card">
+<h3>Clean Preview</h3>
+<p class="cmd-desc">Remove preview files for a module.</p>
+<div class="cmd-box">mvn exec:java -Dexec.mainClass=novac.ai.spark.SparkRunner "-Dexec.args=--clean MyModule"</div>
+</div>
+</div>
+</section>
+
+<!-- OUTPUT STRUCTURE -->
+<section>
+<div class="container">
+<span class="tag">Output</span>
+<h2>What Gets Generated</h2>
+<p>All preview assets are placed in a safe review location before touching your project.</p>
+
+<!-- SCREENSHOT 1: spark-output folder -->
+<div class="screenshot-frame">
+<div class="screenshot-titlebar">
+<span class="screenshot-dot red"></span><span class="screenshot-dot yellow"></span><span class="screenshot-dot green"></span>
+<span class="screenshot-title">spark-output/SystemParameters/</span>
+</div>
+<div class="screenshot-body">
+<div class="file-explorer">
+<div class="file-row folder-row"><span class="fe-icon">📁</span> spark-output/</div>
+<div class="file-row folder-row indent-1"><span class="fe-icon">📁</span> SystemParameters/</div>
+<div class="file-row indent-2"><span class="fe-icon">📄</span> <span class="fe-name feature">SystemParameters.feature</span> <span class="fe-size">4.2 KB</span> <span class="fe-badge ready">Gherkin</span></div>
+<div class="file-row indent-2"><span class="fe-icon">📄</span> <span class="fe-name json">SystemParameters.json</span> <span class="fe-size">1.8 KB</span> <span class="fe-badge data">Test Data</span></div>
+<div class="file-row indent-2"><span class="fe-icon">📄</span> <span class="fe-name java">SystemParametersConstants.java</span> <span class="fe-size">2.1 KB</span> <span class="fe-badge template">Template</span></div>
+<div class="file-row indent-2"><span class="fe-icon">📋</span> <span class="fe-name review">REVIEW.md</span> <span class="fe-size">1.4 KB</span> <span class="fe-badge review-badge">Review</span></div>
+<div class="file-row indent-2"><span class="fe-icon">⚙️</span> <span class="fe-name meta">.spark-meta.json</span> <span class="fe-size">0.3 KB</span> <span class="fe-badge meta-badge">Meta</span></div>
+</div>
+</div>
+</div>
+<p style="text-align:center;font-size:.85rem;color:var(--muted);margin-top:12px"><em>Example: AI-generated output folder for a real module (SystemParameters)</em></p>
+
+<div style="margin-top:48px">
+<h3>After Apply</h3>
+<p>Files move to their correct framework locations:</p>
+<div class="output-tree" style="margin-top:12px">
+<span class="file">MyModule.feature</span> → <span class="folder">src/test/resources/features/MyModule/</span><br>
+<span class="file">MyModule.json</span> → <span class="folder">TestDatastore/json/</span><br>
+<span class="file">MyModuleConstants.java</span> → <span class="folder">src/main/java/novac/constants/</span>
+</div>
+</div>
+</div>
+</section>
+
+<!-- READINESS -->
+<section>
+<div class="container">
+<span class="tag">Quality Gate</span>
+<h2>AI Automation Readiness Score</h2>
+<p>Spark's AI measures how many generated steps match your existing reusable step library. This intelligent scoring tells you how much manual work remains.</p>
+
+<!-- SCREENSHOT 2: REVIEW.md readiness output -->
+<div class="screenshot-frame" style="margin-bottom:40px">
+<div class="screenshot-titlebar">
+<span class="screenshot-dot red"></span><span class="screenshot-dot yellow"></span><span class="screenshot-dot green"></span>
+<span class="screenshot-title">REVIEW.md — AI Readiness Report</span>
+</div>
+<div class="screenshot-body review-preview">
+<div class="rp-header">Spark Generation Summary — SystemParameters</div>
+<div class="rp-meta">Generated: 2026-05-26 16:30:35 &nbsp;|&nbsp; Module: SystemParameters</div>
+<div class="rp-divider"></div>
+<div class="rp-section-title">✅ Generated Assets</div>
+<div class="rp-table">
+<div class="rp-row rp-row-header"><span>Asset</span><span>File</span><span>Status</span></div>
+<div class="rp-row"><span>Feature File</span><span>SystemParameters.feature</span><span class="rp-status-ready">✅ Ready</span></div>
+<div class="rp-row"><span>Test Data</span><span>SystemParameters.json</span><span class="rp-status-ready">✅ Ready</span></div>
+<div class="rp-row"><span>Constants</span><span>SystemParametersConstants.java</span><span class="rp-status-warn">⚠️ Locators needed</span></div>
+</div>
+<div class="rp-section-title">📊 Generation Stats</div>
+<div class="rp-stats"><span>Test cases: <strong>9</strong></span><span>Total steps: <strong>63</strong></span></div>
+<div class="rp-section-title">🤖 AI Automation Readiness</div>
+<div class="rp-score-box">
+<div class="rp-score">100%</div>
+<div class="rp-score-label">✅ READY</div>
+</div>
+<div class="rp-section-title">🔄 Step Reusability Analysis</div>
+<div class="rp-reuse-grid">
+<div class="rp-reuse-item"><span class="rp-reuse-num">63</span><span class="rp-reuse-label">Matched</span></div>
+<div class="rp-reuse-item"><span class="rp-reuse-num">0</span><span class="rp-reuse-label">Custom needed</span></div>
+<div class="rp-reuse-item"><span class="rp-reuse-num">100%</span><span class="rp-reuse-label">Reusability</span></div>
+</div>
+<div class="rp-section-title">✅ Top Reusable Steps Used</div>
+<div class="rp-step-list">
+<div class="rp-step-row"><code>I select {string} from {string} in modal</code><span class="rp-count">×10</span></div>
+<div class="rp-step-row"><code>I open {string} from main menu</code><span class="rp-count">×9</span></div>
+<div class="rp-step-row"><code>I perform {string} action on record...</code><span class="rp-count">×8</span></div>
+<div class="rp-step-row"><code>I enter {string} in {string} on {string} page</code><span class="rp-count">×7</span></div>
+<div class="rp-step-row"><code>I verify {string} has value {string}...</code><span class="rp-count">×6</span></div>
+</div>
+</div>
+</div>
+<p style="text-align:center;font-size:.85rem;color:var(--muted);margin-top:12px"><em>Example: AI-generated REVIEW.md for SystemParameters (real output from validation run)</em></p>
+
+<div class="readiness-cards">
+<div class="readiness-card ready">
+<div class="score">≥ 80%</div>
+<div class="status">✅ READY</div>
+<div class="desc">Near plug-and-play. Fill locators and run. Apply allowed.</div>
+</div>
+<div class="readiness-card review">
+<div class="score">50–79%</div>
+<div class="status">⚠️ REVIEW REQUIRED</div>
+<div class="desc">Some custom steps needed. Apply allowed with review.</div>
+</div>
+<div class="readiness-card low">
+<div class="score">< 50%</div>
+<div class="status">❌ LOW READINESS</div>
+<div class="desc">Heavy manual effort. Apply blocked (use --force to override).</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- BEST PRACTICES -->
+<section>
+<div class="container">
+<span class="tag">Tips</span>
+<h2>Best Practices</h2>
+
+<div class="practices">
+<div class="practice-item"><span class="practice-icon">📖</span><span class="practice-text"><strong>Write clear BRDs</strong> — Include screens, fields, validations, and business rules. Better input = better output.</span></div>
+<div class="practice-item"><span class="practice-icon">👀</span><span class="practice-text"><strong>Always review REVIEW.md</strong> — It tells you exactly what's ready and what needs manual work.</span></div>
+<div class="practice-item"><span class="practice-icon">🎯</span><span class="practice-text"><strong>Fill locators before running</strong> — Constants are templates. Every field needs a real XPath or CSS selector.</span></div>
+<div class="practice-item"><span class="practice-icon">✅</span><span class="practice-text"><strong>Validate business rules</strong> — Confirm generated scenarios cover the rules your domain expert cares about.</span></div>
+<div class="practice-item"><span class="practice-icon">🔄</span><span class="practice-text"><strong>Check test data values</strong> — Spark generates realistic samples, but verify they match your actual system.</span></div>
+<div class="practice-item"><span class="practice-icon">📐</span><span class="practice-text"><strong>Trust the reusability score</strong> — If it says READY, the feature file uses your existing steps. If LOW, investigate.</span></div>
+<div class="practice-item"><span class="practice-icon">🚫</span><span class="practice-text"><strong>Don't skip review</strong> — Never apply without reading the generated feature file. Spark assists, you approve.</span></div>
+</div>
+</div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+<div class="container">
+<img src="../src/main/resources/assets/nafpro_logo.png" alt="NAFPro Atlas">
+<p>NAFPro Atlas Spark — AI-Powered Shift-Left QA Acceleration</p>
+<p style="margin-top:8px"><a href="NAFPro_Atlas_Architecture_Portal.html">Architecture Portal</a> · <a href="../ReadMe.md">README</a></p>
+<p style="margin-top:12px;opacity:.6">Automation Framework Team</p>
+</div>
+</footer>
+
+</body>
+</html>

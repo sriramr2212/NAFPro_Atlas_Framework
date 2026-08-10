@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NAFPro Atlas — Leadership Showcase</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy:#0B1220;--navy2:#111C33;--panel:#16243F;--ink:#EAF2FB;--muted:#8FA3C0;
+  --sky:#0EA5E9;--cyan:#22D3EE;--gold:#E5A50C;--gold2:#D4920B;
+  --green:#10B981;--red:#EF4444;--border:rgba(142,169,207,.18);
+  --radius:18px;
+}
+html,body{height:100%;overflow:hidden;background:var(--navy);color:var(--ink);
+  font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+h1,h2,h3,.display{font-family:'Space Grotesk',sans-serif}
+.mono{font-family:'JetBrains Mono',monospace}
+
+/* ===== DECK SHELL ===== */
+#deck{position:relative;width:100vw;height:100vh}
+.slide{position:absolute;inset:0;padding:64px 84px;display:flex;flex-direction:column;
+  justify-content:center;opacity:0;transform:translateX(60px) scale(.985);
+  pointer-events:none;transition:opacity .55s cubic-bezier(.22,1,.36,1),transform .55s cubic-bezier(.22,1,.36,1)}
+.slide.active{opacity:1;transform:translateX(0) scale(1);pointer-events:auto;z-index:2}
+.slide.prev{transform:translateX(-60px) scale(.985)}
+
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:.72rem;font-weight:600;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--sky);margin-bottom:18px}
+.eyebrow::before{content:'';width:26px;height:2px;background:var(--sky);border-radius:2px}
+.eyebrow.gold{color:var(--gold)}.eyebrow.gold::before{background:var(--gold)}
+h1{font-size:clamp(2.6rem,5.6vw,4.6rem);font-weight:700;letter-spacing:-.03em;line-height:1.04}
+h2{font-size:clamp(1.9rem,3.4vw,2.9rem);font-weight:700;letter-spacing:-.02em;line-height:1.12;margin-bottom:14px}
+h3{font-size:1.12rem;font-weight:600}
+.sub{color:var(--muted);font-size:1.06rem;max-width:640px;line-height:1.65}
+
+/* ambient background */
+.bg-orbs{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(90px);opacity:.35;animation:drift 24s ease-in-out infinite alternate}
+.orb.a{width:520px;height:520px;background:#0EA5E933;top:-140px;right:-120px}
+.orb.b{width:420px;height:420px;background:#D4920B22;bottom:-160px;left:-100px;animation-delay:-8s}
+.orb.c{width:340px;height:340px;background:#22D3EE1d;top:40%;left:38%;animation-delay:-16s}
+@keyframes drift{from{transform:translate(0,0)}to{transform:translate(50px,-40px)}}
+
+/* nav chrome */
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--sky),var(--gold));
+  z-index:50;transition:width .4s cubic-bezier(.22,1,.36,1)}
+#hud{position:fixed;bottom:26px;left:0;right:0;display:flex;justify-content:center;gap:8px;z-index:50}
+#hud .dot{width:8px;height:8px;border-radius:50%;background:rgba(143,163,192,.3);cursor:pointer;transition:all .3s}
+#hud .dot.on{background:var(--sky);transform:scale(1.35);box-shadow:0 0 12px #0EA5E980}
+#counter{position:fixed;bottom:22px;right:34px;font-size:.78rem;color:var(--muted);z-index:50}
+.navbtn{position:fixed;top:50%;transform:translateY(-50%);z-index:50;width:46px;height:46px;
+  border-radius:50%;border:1px solid var(--border);background:rgba(22,36,63,.6);backdrop-filter:blur(8px);
+  color:var(--ink);font-size:1.15rem;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center}
+.navbtn:hover{background:var(--sky);border-color:var(--sky)}
+#prevB{left:22px}#nextB{right:22px}
+#hint{position:fixed;bottom:22px;left:34px;font-size:.74rem;color:var(--muted);z-index:50;opacity:.8}
+
+/* reveal choreography */
+.rv{opacity:0;transform:translateY(26px);transition:opacity .6s cubic-bezier(.22,1,.36,1),transform .6s cubic-bezier(.22,1,.36,1)}
+.slide.active .rv{opacity:1;transform:translateY(0)}
+.slide.active .rv.d1{transition-delay:.12s}.slide.active .rv.d2{transition-delay:.24s}
+.slide.active .rv.d3{transition-delay:.36s}.slide.active .rv.d4{transition-delay:.48s}
+.slide.active .rv.d5{transition-delay:.6s}.slide.active .rv.d6{transition-delay:.72s}
+
+/* ===== S1 HERO ===== */
+#s1{align-items:center;text-align:center}
+.hero-badge{display:inline-flex;gap:10px;align-items:center;border:1px solid var(--border);
+  background:rgba(22,36,63,.55);padding:9px 20px;border-radius:30px;font-size:.8rem;color:var(--muted);margin-bottom:28px}
+.hero-badge b{color:var(--gold);font-weight:600}
+.grad-text{background:linear-gradient(100deg,var(--ink) 20%,var(--sky) 55%,var(--cyan) 75%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero-tag{font-size:clamp(1.05rem,2vw,1.4rem);color:var(--gold);font-weight:600;margin:20px 0 10px;font-family:'Space Grotesk'}
+.hero-sub{color:var(--muted);max-width:600px;font-size:1.02rem;line-height:1.65}
+.hero-chips{display:flex;gap:12px;margin-top:40px;flex-wrap:wrap;justify-content:center}
+.agenda{display:flex;gap:18px;margin-top:34px;flex-wrap:wrap;justify-content:center}
+.presenter{margin-top:26px;font-size:.8rem;color:var(--muted);letter-spacing:.4px;font-family:'JetBrains Mono'}
+.agenda-item{display:flex;gap:14px;align-items:center;border:1px solid var(--border);border-radius:var(--radius);
+  padding:18px 26px;background:rgba(22,36,63,.5);min-width:260px;text-align:left}
+.agenda-item .num{font-family:'JetBrains Mono';font-size:1.3rem;font-weight:700;color:var(--gold)}
+.agenda-item h4{font-family:'Space Grotesk';font-size:1.02rem;color:var(--text)}
+.agenda-item p{font-size:.8rem;color:var(--muted);margin-top:2px}
+.chip{border:1px solid var(--border);background:rgba(22,36,63,.5);border-radius:12px;padding:11px 20px;
+  font-size:.85rem;font-weight:500;transition:all .25s}
+.chip:hover{border-color:var(--sky);transform:translateY(-3px)}
+.chip .mono{color:var(--cyan);margin-right:6px}
+
+/* ===== S2 FLASHBACK ===== */
+#s2 .film{position:relative;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);
+  background:#0d1526;padding:44px 52px;filter:grayscale(1) contrast(1.08) brightness(.9);
+  transition:filter .9s ease}
+#s2 .film::after{content:'';position:absolute;inset:0;pointer-events:none;opacity:.5;z-index:2;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.28'/%3E%3C/svg%3E");
+  animation:grain .35s steps(2) infinite}
+#s2 .film::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:3;
+  background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.55) 100%)}
+@keyframes grain{0%{transform:translate(0,0)}25%{transform:translate(-2%,1%)}50%{transform:translate(1%,-2%)}75%{transform:translate(-1%,2%)}100%{transform:translate(2%,-1%)}}
+#s2 .film.colorize{filter:grayscale(0) contrast(1) brightness(1)}
+
+/* ===== S3 continues the colorize bridge from S2 ===== */
+#s3{filter:grayscale(1) contrast(1.08) brightness(.9);transition:filter 1s ease}
+#s3.colorized{filter:grayscale(0) contrast(1) brightness(1)}
+.scan{position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 1px,transparent 1px 3px);
+  animation:scanmove 7s linear infinite}
+@keyframes scanmove{to{background-position:0 120px}}
+.flickL{position:absolute;inset:0;z-index:2;pointer-events:none;background:#fff;opacity:0;
+  mix-blend-mode:overlay;animation:flick 3.8s steps(2) infinite}
+@keyframes flick{0%,100%{opacity:0}4%{opacity:.05}5%{opacity:0}31%{opacity:.07}33%{opacity:0}62%{opacity:.04}63%{opacity:0}}
+.scratch{position:absolute;top:0;bottom:0;width:1px;z-index:2;pointer-events:none;
+  background:rgba(255,255,255,.16);animation:scr 2.6s linear infinite}
+.scratch.s2b{animation-duration:3.9s;animation-delay:-1.4s;background:rgba(255,255,255,.1)}
+@keyframes scr{0%{left:12%;opacity:0}8%{opacity:1}45%{left:64%}70%{opacity:.5}100%{left:88%;opacity:0}}
+.leader{position:absolute;inset:0;z-index:8;background:#0a0f1c;display:flex;align-items:center;
+  justify-content:center;transition:opacity .5s ease}
+.leader.gone{opacity:0;pointer-events:none}
+.leader .ring{width:160px;height:160px;border:3px solid #556;border-radius:50%;position:relative;
+  display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';
+  font-size:4.4rem;font-weight:700;color:#ccd}
+.leader .ring::before,.leader .ring::after{content:'';position:absolute;background:rgba(200,210,230,.25)}
+.leader .ring::before{left:-40px;right:-40px;height:1px;top:50%}
+.leader .ring::after{top:-40px;bottom:-40px;width:1px;left:50%}
+.leader .sweep{position:absolute;inset:-3px;border-radius:50%;
+  background:conic-gradient(rgba(255,255,255,.22),transparent 45%);animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.rec{position:absolute;top:18px;right:24px;z-index:4;display:flex;gap:8px;align-items:center;
+  font-size:.72rem;letter-spacing:.15em;color:#ccc;font-family:'JetBrains Mono'}
+.rec::before{content:'';width:9px;height:9px;border-radius:50%;background:var(--red);animation:blink 1.2s infinite}
+@keyframes blink{50%{opacity:.2}}
+.old-feats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:30px}
+.old-feat{border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:20px;background:rgba(255,255,255,.04)}
+.old-feat h3{font-size:.98rem;margin-bottom:6px;color:#dde}
+.old-feat p{font-size:.82rem;color:#99a;line-height:1.5}
+.ai-tag{position:relative;z-index:5;display:inline-flex;align-items:center;gap:8px;margin-top:28px;
+  background:linear-gradient(135deg,var(--gold),#f3c245);color:#1a1405;font-weight:700;font-size:.85rem;
+  padding:10px 22px;border-radius:26px;font-family:'Space Grotesk';
+  box-shadow:0 0 28px #E5A50C66;animation:pulseGold 2.4s ease-in-out infinite}
+@keyframes pulseGold{50%{box-shadow:0 0 44px #E5A50C99}}
+.flash-note{margin-top:16px;font-size:.8rem;color:var(--muted);font-style:italic}
+
+/* ===== S3 EVOLUTION ===== */
+.evo-wrap{display:grid;grid-template-columns:1fr auto 1.35fr;gap:34px;align-items:center;margin-top:26px}
+.evo-old{border:1px dashed rgba(143,163,192,.4);border-radius:var(--radius);padding:30px;text-align:center;
+  filter:grayscale(.9);opacity:.75}
+.evo-old .name{font-family:'Space Grotesk';font-weight:700;font-size:1.5rem}
+.evo-old p{font-size:.82rem;color:var(--muted);margin-top:8px}
+.evo-arrow{font-size:2rem;color:var(--gold);animation:nudge 1.6s ease-in-out infinite}
+@keyframes nudge{50%{transform:translateX(8px)}}
+.evo-new{position:relative;border:1px solid var(--sky);border-radius:var(--radius);padding:34px;
+  background:linear-gradient(145deg,rgba(14,165,233,.12),rgba(212,146,11,.07));
+  box-shadow:0 0 50px rgba(14,165,233,.15)}
+.evo-new .name{font-family:'Space Grotesk';font-weight:700;font-size:2rem;
+  background:linear-gradient(90deg,var(--sky),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.evo-new p{font-size:.9rem;color:var(--muted);margin-top:8px;line-height:1.6}
+.evo-list{list-style:none;text-align:left;margin-top:18px;display:flex;flex-direction:column;gap:9px}
+.evo-list li{font-size:.84rem;color:var(--text);padding-left:20px;position:relative}
+.evo-list li::before{content:'→';position:absolute;left:0;color:var(--sky)}
+.evo-old .evo-list li::before{color:var(--muted)}
+.why-atlas{margin-top:30px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.why-card{border:1px solid var(--border);border-radius:14px;padding:20px 22px;background:rgba(22,36,63,.5)}
+.why-card .ic{font-size:1.4rem;margin-bottom:8px}
+.why-card h3{font-size:.95rem;margin-bottom:5px}
+.why-card p{font-size:.8rem;color:var(--muted);line-height:1.55}
+.atlas-line{margin-top:24px;font-size:.95rem;color:var(--ink);border-left:3px solid var(--gold);padding:6px 0 6px 18px}
+.atlas-line b{color:var(--gold)}
+
+/* ===== S4 PROBLEM ===== */
+.pain-list{margin-top:26px;max-width:720px}
+.pain{display:flex;align-items:center;gap:16px;padding:15px 22px;border:1px solid var(--border);
+  border-radius:14px;margin-bottom:12px;background:rgba(22,36,63,.5);font-size:1rem;position:relative;overflow:hidden}
+.pain .x{color:var(--red);font-weight:700}
+.pain .strike{position:absolute;left:58px;right:22px;top:50%;height:2px;background:var(--red);
+  transform:scaleX(0);transform-origin:left;transition:transform .5s ease}
+.pain.struck .strike{transform:scaleX(1)}
+.pain.struck{opacity:.55}
+.pain.struck span.t{color:var(--muted)}
+.resolve{margin-top:22px;font-size:1.05rem;font-weight:600;color:var(--green);opacity:0;transform:translateY(12px);
+  transition:all .5s ease;font-family:'Space Grotesk'}
+.resolve.show{opacity:1;transform:translateY(0)}
+.click-cue{font-size:.76rem;color:var(--muted);margin-top:14px;opacity:.7}
+#painReset{margin-left:14px;border:1px solid var(--border);background:rgba(22,36,63,.7);color:var(--muted);
+  border-radius:10px;padding:5px 14px;font-size:.74rem;cursor:pointer;transition:all .2s}
+#painReset:hover{color:var(--ink);border-color:var(--sky)}
+
+/* ===== S5 CORE ===== */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:30px}
+.stat{border:1px solid var(--border);border-radius:var(--radius);padding:26px 20px;text-align:center;
+  background:rgba(22,36,63,.55);transition:all .3s;cursor:pointer}
+.stat:hover,.stat.sel{border-color:var(--sky);transform:translateY(-4px)}
+.stat.sel{box-shadow:0 0 26px rgba(14,165,233,.2)}
+.stat .n{font-size:2.8rem;font-weight:700;font-family:'Space Grotesk';
+  background:linear-gradient(120deg,var(--sky),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat .l{font-size:.8rem;color:var(--ink);margin-top:6px;font-weight:600}
+.stat .e{font-size:.7rem;color:var(--muted);margin-top:5px;line-height:1.45}
+#statDetail{margin-top:20px;border:1px solid rgba(14,165,233,.4);border-left:3px solid var(--sky);
+  border-radius:12px;padding:16px 22px;background:rgba(14,165,233,.07);font-size:.9rem;color:var(--ink);
+  line-height:1.6;opacity:0;transform:translateY(8px);transition:all .35s;min-height:0}
+#statDetail.show{opacity:1;transform:translateY(0)}
+.core-line{margin-top:30px;font-size:1.05rem;color:var(--ink)}
+.core-line b{color:var(--cyan)}
+
+/* ===== S6 ARCHITECTURE (interactive) ===== */
+#s6{padding:52px 60px}
+#archStage{position:relative;flex:1;min-height:0;border:1px solid var(--border);border-radius:var(--radius);
+  background:radial-gradient(circle at 50% 45%,rgba(14,165,233,.07),transparent 60%),rgba(13,21,38,.6);
+  overflow:hidden;margin-top:16px;touch-action:none}
+#wires{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+#wires line{stroke:rgba(14,165,233,.4);stroke-width:1.6;stroke-dasharray:5 6;animation:dash 1.4s linear infinite}
+#wires line.gold{stroke:rgba(229,165,12,.55)}
+@keyframes dash{to{stroke-dashoffset:-11}}
+.node{position:absolute;cursor:grab;user-select:none;border-radius:16px;padding:14px 20px;text-align:center;
+  border:1px solid var(--border);background:rgba(22,36,63,.92);backdrop-filter:blur(6px);
+  transition:box-shadow .25s,border-color .25s,opacity .35s,transform .35s;min-width:132px;z-index:3}
+.node:active{cursor:grabbing}
+.node .ni{font-size:1.3rem}
+.node .nt{font-family:'Space Grotesk';font-weight:600;font-size:.86rem;margin-top:3px}
+.node .ns{font-size:.66rem;color:var(--muted);margin-top:2px}
+.node:hover{border-color:var(--sky);box-shadow:0 8px 30px rgba(14,165,233,.25)}
+.node.core{cursor:default;border:2px solid var(--sky);padding:22px 34px;min-width:200px;z-index:4;
+  background:linear-gradient(150deg,#16243F,#0E1A30);box-shadow:0 0 46px rgba(14,165,233,.28)}
+.node.core .nt{font-size:1.2rem}
+.node.core .ns{color:var(--cyan)}
+.node.gold{border-color:rgba(229,165,12,.6)}
+.node.gold:hover{border-color:var(--gold);box-shadow:0 8px 30px rgba(229,165,12,.3)}
+.node.locked{border-style:solid;border-color:rgba(143,163,192,.4)}
+.node.locked:hover{border-color:rgba(143,163,192,.7);box-shadow:0 6px 22px rgba(143,163,192,.15)}
+.corepin{position:absolute;top:-9px;left:-8px;font-size:.62rem;color:var(--muted);background:var(--navy);
+  border:1px solid rgba(143,163,192,.45);border-radius:10px;padding:1px 8px;font-family:'JetBrains Mono'}
+.node.ghosted{border-style:dashed;border-color:rgba(143,163,192,.45);background:rgba(22,36,63,.25);
+  box-shadow:none}
+.node.ghosted .ni,.node.ghosted .nt,.node.ghosted .ns,.node.ghosted .pluggable{opacity:.12}
+.node.ghosted::after{content:'+ restore';position:absolute;inset:0;display:flex;align-items:center;
+  justify-content:center;font-size:.74rem;color:var(--cyan);font-family:'JetBrains Mono'}
+.node.ghosted.gold::after{color:var(--gold)}
+.node.pop{animation:pop .45s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pop{0%{transform:scale(.4)}70%{transform:scale(1.08)}100%{transform:scale(1)}}
+.pluggable{position:absolute;font-size:.68rem;color:var(--gold);top:-9px;right:-8px;background:var(--navy);
+  border:1px solid rgba(229,165,12,.5);border-radius:10px;padding:1px 8px;font-family:'JetBrains Mono'}
+#archLegend{display:flex;gap:22px;margin-top:12px;font-size:.76rem;color:var(--muted);flex-wrap:wrap}
+#archLegend b{color:var(--ink);font-weight:600}
+#resetArch{position:absolute;top:14px;right:14px;z-index:6;border:1px solid var(--border);background:rgba(22,36,63,.8);
+  color:var(--muted);border-radius:10px;padding:6px 14px;font-size:.74rem;cursor:pointer;transition:all .2s}
+#resetArch:hover{color:var(--ink);border-color:var(--sky)}
+#dockHint{position:absolute;bottom:12px;left:16px;z-index:6;font-size:.72rem;color:var(--muted);opacity:.8}
+
+/* ===== S7 WEB BREADTH ===== */
+.flip-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:32px}
+.flip{perspective:900px;height:130px}
+.flip-inner{position:relative;width:100%;height:100%;transition:transform .6s cubic-bezier(.4,.1,.2,1);transform-style:preserve-3d}
+.flip:hover .flip-inner{transform:rotateY(180deg)}
+.flip-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:14px;display:flex;
+  flex-direction:column;align-items:center;justify-content:center;gap:6px;border:1px solid var(--border)}
+.flip-front{background:rgba(22,36,63,.6)}
+.flip-front .fi{font-size:1.6rem}
+.flip-front .ft{font-family:'Space Grotesk';font-weight:600;font-size:.92rem}
+.flip-back{background:linear-gradient(140deg,rgba(14,165,233,.18),rgba(34,211,238,.08));transform:rotateY(180deg);padding:12px;text-align:center}
+.flip-back .zr{color:var(--green);font-weight:700;font-size:.82rem;font-family:'Space Grotesk'}
+.flip-back p{font-size:.72rem;color:var(--muted);line-height:1.4;margin-top:4px}
+.flip.was{border:none}
+.flip.was .flip-front{border-color:rgba(229,165,12,.5)}
+.flip .known{position:absolute;top:-8px;left:12px;z-index:5;font-size:.62rem;background:var(--gold);color:#1a1405;
+  font-weight:700;border-radius:8px;padding:2px 8px;font-family:'JetBrains Mono'}
+.breadth-note{margin-top:22px;font-size:.9rem;color:var(--muted)}
+.breadth-note b{color:var(--ink)}
+
+/* ===== S8 DESKTOP ===== */
+.dk-wrap{display:grid;grid-template-columns:1.1fr 1fr;gap:44px;margin-top:26px;align-items:center}
+.dk-window{border:1px solid var(--border);border-radius:14px;overflow:hidden;background:#0d1526}
+.dk-bar{background:#1a2947;padding:9px 14px;display:flex;gap:7px}
+.dk-bar span{width:11px;height:11px;border-radius:50%}
+.dk-bar .r{background:#EF4444}.dk-bar .y{background:#F59E0B}.dk-bar .g{background:#10B981}
+.dk-body{padding:24px;font-family:'JetBrains Mono';font-size:.8rem;line-height:2;color:var(--muted)}
+.dk-body .ok{color:var(--green)}
+.dk-body .hl{color:var(--cyan)}
+.life-line{display:flex;flex-direction:column;gap:0;margin-top:8px}
+.life-step{display:flex;gap:14px;align-items:flex-start;padding:11px 0}
+.life-dot{width:12px;height:12px;border-radius:50%;background:var(--sky);margin-top:5px;flex-shrink:0;
+  box-shadow:0 0 12px rgba(14,165,233,.5)}
+.life-step h3{font-size:.92rem}
+.life-step p{font-size:.78rem;color:var(--muted);margin-top:2px}
+
+/* ===== S9 RCA ===== */
+.rca-wrap{display:grid;grid-template-columns:1fr 1fr;gap:44px;margin-top:24px;align-items:center}
+.rca-card{border:1px solid var(--border);border-radius:var(--radius);background:rgba(13,21,38,.8);padding:26px 30px}
+.rca-row{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border);font-size:.87rem}
+.rca-row:last-child{border-bottom:none}
+.rca-row .k{color:var(--muted)}
+.rca-row .v{font-weight:600;text-align:right}
+.rca-row .v.app{color:var(--red)}
+.gauge-wrap{text-align:center}
+.gauge{position:relative;width:190px;height:190px;margin:0 auto}
+.gauge svg{transform:rotate(-90deg)}
+.gauge .track{fill:none;stroke:rgba(143,163,192,.15);stroke-width:12}
+.gauge .fill{fill:none;stroke:url(#gaugeGrad);stroke-width:12;stroke-linecap:round;
+  stroke-dasharray:502;stroke-dashoffset:502;transition:stroke-dashoffset 1.6s cubic-bezier(.22,1,.36,1)}
+.gauge .val{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.gauge .val .n{font-size:2.5rem;font-weight:700;font-family:'Space Grotesk';color:var(--cyan)}
+.gauge .val .l{font-size:.72rem;color:var(--muted)}
+.rca-points{margin-top:18px}
+.rca-points li{list-style:none;font-size:.87rem;color:var(--muted);padding:6px 0}
+.rca-points li::before{content:'▸ ';color:var(--sky)}
+
+/* ===== S10 DEFECT WRITER ===== */
+.jira-card{border:1px solid var(--border);border-radius:var(--radius);background:#0d1526;overflow:hidden;
+  max-width:760px;margin-top:24px}
+.jira-head{background:#1a2947;padding:12px 20px;display:flex;align-items:center;gap:12px;font-size:.8rem}
+.jira-key{font-family:'JetBrains Mono';color:var(--cyan);font-weight:600}
+.jira-sev{background:rgba(239,68,68,.18);color:#f88;border:1px solid rgba(239,68,68,.4);border-radius:8px;
+  padding:2px 10px;font-size:.7rem;font-weight:600}
+.jira-body{padding:22px 24px;font-family:'JetBrains Mono';font-size:.82rem;line-height:1.85;color:var(--ink);
+  min-height:230px;white-space:pre-wrap}
+.jira-body .cursor{display:inline-block;width:8px;height:16px;background:var(--cyan);vertical-align:-2px;animation:blink 1s infinite}
+.dw-note{margin-top:18px;font-size:.88rem;color:var(--muted)}
+.dw-note b{color:var(--ink)}
+
+/* ===== S11 SPARK ===== */
+.spark-flow{display:flex;align-items:center;gap:0;margin-top:38px;justify-content:center}
+.sp-stage{border:1px solid var(--border);border-radius:14px;padding:20px 22px;text-align:center;min-width:150px;
+  background:rgba(22,36,63,.55);transition:all .5s;opacity:.35;transform:scale(.94)}
+.sp-stage .si{font-size:1.5rem}
+.sp-stage .st{font-family:'Space Grotesk';font-weight:600;font-size:.88rem;margin-top:6px}
+.sp-stage .ss{font-size:.7rem;color:var(--muted);margin-top:3px}
+.sp-stage.lit{opacity:1;transform:scale(1);border-color:var(--gold);box-shadow:0 0 28px rgba(229,165,12,.22)}
+.sp-stage.final.lit{border-color:var(--green);box-shadow:0 0 28px rgba(16,185,129,.25)}
+.sp-arrow{font-size:1.3rem;color:var(--muted);padding:0 12px;opacity:.35;transition:opacity .5s}
+.sp-arrow.lit{opacity:1;color:var(--gold)}
+.spark-facts{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;margin:36px auto 0;max-width:1060px}
+.sf{border:1px solid rgba(229,165,12,.35);border-radius:14px;padding:18px 20px;background:rgba(22,36,63,.55);
+  width:300px;transition:all .25s;box-shadow:0 0 18px rgba(229,165,12,.06)}
+.sf:hover{border-color:var(--gold);transform:translateY(-3px);box-shadow:0 0 26px rgba(229,165,12,.18)}
+.sf h3{font-size:.92rem;color:var(--gold);margin-bottom:5px}
+.sf p{font-size:.8rem;color:var(--muted);line-height:1.55}
+
+/* ===== S14 USE CASE ===== */
+.uc-mods{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
+.uc-mod{border:1px solid var(--border);border-radius:999px;padding:9px 18px;font-size:.82rem;
+  background:rgba(22,36,63,.55);color:var(--text)}
+.uc-compare{margin-top:22px;display:flex;flex-direction:column;gap:18px}
+.uc-row{display:grid;grid-template-columns:220px 1fr;gap:22px;align-items:center;
+  border:1px solid var(--border);border-radius:var(--radius);padding:18px 22px;background:rgba(22,36,63,.4)}
+.uc-label h4{font-family:'Space Grotesk';font-size:1rem;color:var(--text)}
+.uc-label p{font-size:.76rem;color:var(--muted);margin-top:2px}
+.uc-bars{display:flex;flex-direction:column;gap:10px}
+.uc-bar-line{display:grid;grid-template-columns:70px 1fr 90px;gap:12px;align-items:center}
+.uc-who{font-size:.74rem;color:var(--muted)}
+.uc-track{height:14px;border-radius:8px;background:rgba(143,163,192,.14);overflow:hidden}
+.uc-fill{height:100%;width:0;border-radius:8px;transition:width 1.3s cubic-bezier(.2,.8,.2,1)}
+.uc-fill.manual{background:linear-gradient(90deg,#5b6b85,#8fa3c0)}
+.uc-fill.auto{background:linear-gradient(90deg,var(--sky),var(--cyan))}
+.uc-time{font-family:'JetBrains Mono';font-size:.8rem;color:var(--text);text-align:right}
+.uc-time.gold{color:var(--gold);font-weight:700}
+
+/* ===== S15 ROI ===== */
+.roi-math{display:flex;gap:16px;align-items:stretch;margin-top:20px;flex-wrap:wrap}
+.roi-cell{flex:1;min-width:170px;border:1px solid var(--border);border-radius:var(--radius);
+  padding:20px 22px;text-align:center;background:rgba(22,36,63,.5)}
+.roi-cell.hot{border-color:var(--gold);box-shadow:0 0 34px rgba(212,146,11,.18)}
+.roi-cell .rn{font-family:'Space Grotesk';font-size:2.3rem;font-weight:800;color:var(--sky)}
+.roi-cell.hot .rn{color:var(--gold)}
+.roi-cell .rl{font-size:.84rem;color:var(--text);margin-top:2px}
+.roi-cell .rd{font-size:.72rem;color:var(--muted);margin-top:4px}
+.roi-x{align-self:center;font-family:'Space Grotesk';font-size:1.6rem;color:var(--muted)}
+.roi-save{margin-top:20px;border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;background:rgba(22,36,63,.4)}
+.rs-line{display:grid;grid-template-columns:250px 1fr 130px;gap:14px;align-items:center;margin-bottom:10px}
+.rs-who{font-size:.78rem;color:var(--muted)}
+.rs-track{height:14px;border-radius:8px;background:rgba(143,163,192,.14);overflow:hidden}
+.rs-fill{height:100%;width:0;border-radius:8px;transition:width 1.3s cubic-bezier(.2,.8,.2,1)}
+.rs-fill.manual{background:linear-gradient(90deg,#5b6b85,#8fa3c0)}
+.rs-fill.auto{background:linear-gradient(90deg,var(--gold),#f4c04d)}
+.rs-val{font-family:'JetBrains Mono';font-size:.78rem;color:var(--text);text-align:right}
+.rs-val.gold{color:var(--gold);font-weight:700}
+.roi-verdict{margin-top:12px;font-size:.9rem;color:var(--text);line-height:1.6}
+.roi-verdict .big{font-family:'Space Grotesk';font-size:1.7rem;font-weight:800;color:var(--gold);margin-right:8px}
+
+/* ===== S16 NEXUS ===== */
+.nexus-wrap{display:grid;grid-template-columns:1fr 1.25fr;gap:26px;margin-top:20px;align-items:stretch}
+.nx-chat{border:1px solid var(--border);border-radius:var(--radius);background:#0d1526;overflow:hidden;
+  box-shadow:0 0 40px rgba(14,165,233,.12);display:flex;flex-direction:column}
+.nx-head{padding:12px 18px;border-bottom:1px solid var(--border);font-size:.78rem;color:var(--muted);
+  display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono'}
+.nx-dot{width:8px;height:8px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+.nx-body{padding:18px;flex:1;min-height:250px;display:flex;flex-direction:column;gap:10px;justify-content:flex-start}
+.nx-msg{max-width:88%;padding:10px 14px;border-radius:12px;font-size:.8rem;line-height:1.5;
+  opacity:0;transform:translateY(8px);transition:opacity .4s,transform .4s}
+.nx-msg.show{opacity:1;transform:translateY(0)}
+.nx-msg.user{align-self:flex-end;background:rgba(14,165,233,.18);border:1px solid rgba(14,165,233,.4);color:var(--text)}
+.nx-msg.bot{align-self:flex-start;background:rgba(22,36,63,.85);border:1px solid var(--border);color:var(--muted)}
+.nx-msg.bot b{color:var(--cyan)}
+.nx-facts{display:flex;flex-direction:column;gap:12px;justify-content:space-between}
+.nx-facts .sf{flex:1}
+@media(max-width:900px){.nexus-wrap{grid-template-columns:1fr}.uc-row{grid-template-columns:1fr}.rs-line{grid-template-columns:1fr;gap:6px}}
+
+/* ===== S18 THANK YOU ===== */
+#s18{align-items:center;text-align:center;justify-content:center}
+.ty-glow{width:110px;height:110px;border-radius:50%;margin-bottom:30px;position:relative;
+  background:radial-gradient(circle,rgba(229,165,12,.35),rgba(14,165,233,.12) 60%,transparent 75%);
+  animation:breathe 3.5s ease-in-out infinite}
+@keyframes breathe{50%{transform:scale(1.15);opacity:.8}}
+.ty-cta{margin-top:34px;border:1px solid rgba(229,165,12,.4);border-radius:16px;padding:22px 32px;
+  background:linear-gradient(150deg,rgba(229,165,12,.08),rgba(14,165,233,.05));max-width:640px}
+.ty-cta h3{font-size:1.08rem;color:var(--ink);font-family:'Space Grotesk';margin-bottom:8px}
+.ty-cta p{font-size:.9rem;color:var(--muted);line-height:1.6}
+.ty-chips{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap;justify-content:center}
+.ty-chips .chip{font-size:.8rem}
+
+/* ===== S12 REPORTING ===== */
+.rep-compare{display:grid;grid-template-columns:1fr 1.6fr;gap:34px;margin-top:28px;align-items:stretch}
+.rep-then{border:1px dashed rgba(143,163,192,.35);border-radius:var(--radius);padding:26px;filter:grayscale(.8);opacity:.7}
+.rep-then h3{margin-bottom:14px;color:var(--muted)}
+.rep-then li{list-style:none;padding:7px 0;font-size:.88rem;color:var(--muted)}
+.rep-now{border:1px solid var(--sky);border-radius:var(--radius);padding:26px;
+  background:linear-gradient(150deg,rgba(14,165,233,.09),transparent)}
+.rep-now h3{margin-bottom:16px;color:var(--cyan)}
+.rep-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.rep-item{border:1px solid var(--border);border-radius:12px;padding:14px 16px;background:rgba(22,36,63,.6);
+  display:flex;gap:11px;align-items:flex-start;transition:all .25s}
+.rep-item:hover{border-color:var(--sky);transform:translateY(-2px)}
+.rep-item .ri{font-size:1.15rem}
+.rep-item h4{font-size:.85rem;font-family:'Space Grotesk'}
+.rep-item p{font-size:.72rem;color:var(--muted);margin-top:2px;line-height:1.45}
+
+/* ===== S13 DEMO ===== */
+#s13{align-items:center;text-align:center;justify-content:center}
+.demo-pulse{width:130px;height:130px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:3rem;background:linear-gradient(140deg,rgba(14,165,233,.2),rgba(34,211,238,.08));
+  border:2px solid var(--sky);margin-bottom:34px;position:relative}
+.demo-pulse::before,.demo-pulse::after{content:'';position:absolute;inset:-2px;border-radius:50%;
+  border:2px solid var(--sky);animation:ripple 2.2s ease-out infinite}
+.demo-pulse::after{animation-delay:1.1s}
+@keyframes ripple{from{transform:scale(1);opacity:.7}to{transform:scale(1.7);opacity:0}}
+.demo-items{display:flex;gap:14px;margin-top:36px;flex-wrap:wrap;justify-content:center}
+.demo-chip{border:1px solid var(--border);border-radius:12px;padding:12px 22px;background:rgba(22,36,63,.55);
+  font-size:.88rem}
+.demo-chip .mono{color:var(--gold);margin-right:8px}
+
+/* ===== S14 STATIM RESULTS ===== */
+.res-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:34px}
+.res-card{border:1px solid var(--border);border-radius:var(--radius);padding:28px 20px;text-align:center;background:rgba(22,36,63,.55)}
+.res-card .n{font-size:2.7rem;font-weight:700;font-family:'Space Grotesk';color:var(--cyan)}
+.res-card .n.gold{color:var(--gold)}
+.res-card .l{font-size:.78rem;color:var(--muted);margin-top:6px;line-height:1.4}
+.tbd{font-size:.68rem;color:var(--gold);border:1px dashed rgba(229,165,12,.5);border-radius:8px;
+  padding:2px 8px;display:inline-block;margin-top:8px;font-family:'JetBrains Mono'}
+.res-note{margin-top:26px;font-size:.92rem;color:var(--muted);max-width:700px}
+.res-note b{color:var(--ink)}
+
+/* ===== S15 TIMELINE + CLOSE ===== */
+.tl{display:flex;gap:0;margin-top:34px;position:relative}
+.tl::before{content:'';position:absolute;top:9px;left:4%;right:4%;height:2px;
+  background:linear-gradient(90deg,var(--sky),var(--cyan),var(--gold))}
+.tl-item{flex:1;position:relative;padding:30px 14px 0;text-align:center}
+.tl-item::before{content:'';position:absolute;top:2px;left:50%;transform:translateX(-50%);
+  width:15px;height:15px;border-radius:50%;background:var(--sky);border:3px solid var(--navy);z-index:2}
+.tl-item.gold::before{background:var(--gold)}
+.tl-item h3{font-size:.9rem}
+.tl-item p{font-size:.72rem;color:var(--muted);margin-top:5px;line-height:1.5}
+.tl-badge{display:inline-block;font-size:.62rem;font-weight:700;border-radius:9px;padding:2px 9px;
+  margin-top:8px;font-family:'JetBrains Mono';letter-spacing:.05em}
+.tl-badge.frozen{background:rgba(16,185,129,.15);color:var(--green);border:1px solid rgba(16,185,129,.4)}
+.tl-badge.soft{background:rgba(229,165,12,.13);color:var(--gold);border:1px solid rgba(229,165,12,.4);
+  animation:pulseSoft 2.4s ease-in-out infinite}
+@keyframes pulseSoft{50%{box-shadow:0 0 14px rgba(229,165,12,.35)}}
+.close-line{margin-top:46px;text-align:center}
+.close-line .big{font-size:clamp(1.4rem,2.6vw,2rem);font-family:'Space Grotesk';font-weight:700}
+.close-line .big b{background:linear-gradient(90deg,var(--sky),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.close-line p{color:var(--muted);font-size:.9rem;margin-top:10px}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition-duration:.01s!important}}
+@media(max-width:900px){.slide{padding:40px 26px}.stats-row,.res-grid,.flip-grid{grid-template-columns:repeat(2,1fr)}
+.evo-wrap,.dk-wrap,.rca-wrap,.rep-compare{grid-template-columns:1fr}.why-atlas,.spark-facts,.old-feats{grid-template-columns:1fr}
+.tl{flex-direction:column;gap:18px}.tl::before{display:none}.navbtn{display:none}}
+</style>
+</head>
+<body>
+<div class="bg-orbs"><div class="orb a"></div><div class="orb b"></div><div class="orb c"></div></div>
+<div id="progress"></div>
+<button class="navbtn" id="prevB">‹</button>
+<button class="navbtn" id="nextB">›</button>
+<div id="hud"></div>
+<div id="counter"></div>
+<div id="hint">← → keys · swipe · click dots</div>
+
+<div id="deck">
+
+<!-- S1 HERO -->
+<section class="slide" id="s1">
+  <div class="hero-badge rv">NOVAC Technology Solutions</div>
+  <h1 class="rv d1"><span class="grad-text">AI Component Showcase</span></h1>
+  <div class="hero-tag rv d2">Two in-house AI components, built for STATIM 2.0.</div>
+  <div class="agenda rv d3">
+    <div class="agenda-item"><span class="num">01</span><div><h4>NAFPro Atlas</h4><p>Enterprise-grade test automation tool</p></div></div>
+    <div class="agenda-item"><span class="num">02</span><div><h4>NOVAC BRDge</h4><p>AI-powered BRD upgrade &amp; generation tool</p></div></div>
+  </div>
+  <div class="hero-chips rv d4">
+    <div class="chip"><span class="mono">07</span>Technologies</div>
+    <div class="chip"><span class="mono">03</span>AI Accelerators</div>
+    <div class="chip"><span class="mono">00</span>Test Rewrites</div>
+    <div class="chip"><span class="mono">100%</span>In-house</div>
+  </div>
+  <div class="presenter rv d4">Sriram Ramkumar · QA Manager · STATIM 2.0</div>
+</section>
+
+<!-- S2 FLASHBACK -->
+<section class="slide" id="s2">
+  <div class="eyebrow rv">Flashback</div>
+  <h2 class="rv d1">Where we left off — NAFPro</h2>
+  <div class="film rv d2" id="filmBox">
+    <div class="leader" id="filmLeader"><div class="ring"><div class="sweep"></div><span id="leadNum">3</span></div></div>
+    <div class="scan"></div><div class="flickL"></div>
+    <div class="scratch"></div><div class="scratch s2b"></div>
+    <div class="rec">REC · PREVIOUS DEMO</div>
+    <h3 style="font-size:1.3rem;font-family:'Space Grotesk'">NAFPro — the foundation you saw</h3>
+    <div class="old-feats">
+      <div class="old-feat"><h3>Designed by Human, Built by AI</h3><p>Human-architected, AI-authored end to end.</p></div>
+      <div class="old-feat"><h3>Basic Selenium Framework</h3><p>Straightforward Selenium-Cucumber execution, no self-healing layer.</p></div>
+      <div class="old-feat"><h3>Ant Design Only</h3><p>Automation worked against a single UI technology stack.</p></div>
+      <div class="old-feat"><h3>Custom Reporting</h3><p>Purpose-built execution reports for every run.</p></div>
+      <div class="old-feat"><h3>QMetry Integration</h3><p>Automated result upload and execution sync with test management.</p></div>
+      <div class="old-feat"><h3>In-house by Design</h3><p>Built internally end to end, so data security is maintained.</p></div>
+    </div>
+    <div class="flash-note">Solid. Proven. But bound to one technology.</div>
+  </div>
+</section>
+
+<!-- S3 EVOLUTION -->
+<section class="slide" id="s3">
+  <div class="eyebrow rv">Evolution</div>
+  <h2 class="rv d1">From NAFPro to <span class="grad-text">Atlas</span></h2>
+  <div class="evo-wrap rv d2">
+    <div class="evo-old">
+      <div class="name">NAFPro</div>
+      <p>Basic automation framework, purpose-built for one technology stack.</p>
+      <ul class="evo-list">
+        <li>One technology (Ant Design only)</li>
+        <li>Basic Selenium framework</li>
+        <li>Custom reporting</li>
+        <li>QMetry integration</li>
+      </ul>
+    </div>
+    <div class="evo-arrow">➜</div>
+    <div class="evo-new">
+      <div class="name">NAFPro Atlas</div>
+      <p>One engine that carries automation across every UI technology and desktop — the way Atlas carries the world.</p>
+      <ul class="evo-list">
+        <li>Multiple technologies (7 stacks + Desktop)</li>
+        <li>Self-healing, resilient engine</li>
+        <li>AI-powered reporting + RCA</li>
+        <li>QMetry integration, evolved</li>
+      </ul>
+    </div>
+  </div>
+  <div class="atlas-line rv d4">That's why NAFPro didn't get replaced — <b>it evolved.</b></div>
+</section>
+
+<!-- S4 PROBLEM -->
+<section class="slide" id="s4">
+  <div class="eyebrow rv">The Trigger</div>
+  <h2 class="rv d1">What pushed the evolution</h2>
+  <p class="sub rv d2">Every one of these was real, recurring cost on automation.</p>
+  <div class="pain-list rv d3">
+    <div class="pain" data-pain><span class="x">✕</span><span class="t">Automation breaks whenever the UI framework changes</span><span class="strike"></span></div>
+    <div class="pain" data-pain><span class="x">✕</span><span class="t">A different automation approach for every technology</span><span class="strike"></span></div>
+    <div class="pain" data-pain><span class="x">✕</span><span class="t">Slow onboarding and repeated rework cycles</span><span class="strike"></span></div>
+    <div class="pain" data-pain><span class="x">✕</span><span class="t">High, ongoing maintenance effort</span><span class="strike"></span></div>
+  </div>
+  <div class="resolve" id="resolveLine">✓ Atlas removes all four — with one engine.</div>
+  <div class="click-cue rv d4"><button id="painReset">↺ Reset</button></div>
+</section>
+
+<!-- S5 CORE -->
+<section class="slide" id="s5">
+  <div class="eyebrow rv">The Platform</div>
+  <h2 class="rv d1">What Atlas is today</h2>
+  <p class="sub rv d2">One automation layer abstracts all technology differences. The same Gherkin, the same steps, the same reports — everywhere.</p>
+  <div class="stats-row rv d3">
+    <div class="stat" data-detail="65+ proof scenarios were executed during Atlas hardening to validate the engine itself — table operations, waits, recovery, dispatch — across every supported technology. 55 web, 6 desktop, 4 AI Defect Writer. These prove the framework, before any project test is written."><div class="n" data-count="65" data-suffix="+">0</div><div class="l">Framework Proof Scenarios</div><div class="e">Validation runs that prove the engine works across all techs</div></div>
+    <div class="stat" data-detail="Seven technologies on one engine: AG Grid, Ant Design, PrimeNG, Angular Material, MUI, Generic HTML tables, and Windows Desktop. The engine auto-detects the framework at runtime and routes to the correct handler — zero configuration."><div class="n" data-count="7">0</div><div class="l">Supported Technologies</div><div class="e">AG Grid · AntD · PrimeNG · Ang. Material · MUI · HTML · Desktop</div></div>
+    <div class="stat" data-detail="Zero test rewrites means the feature files and step definitions never change when the application's UI framework changes. If the frontend moves from Ant Design to MUI tomorrow, the same tests keep running — only the engine handles the difference underneath."><div class="n" data-count="0">0</div><div class="l">Test Rewrites Required</div><div class="e">Same Gherkin survives any UI framework change</div></div>
+    <div class="stat" data-detail="Three AI accelerators built into Atlas: AI Failure RCA (automatic root cause on every failure), AI Defect Writer (JIRA-ready defect drafts), and AI Spark (BRD to automation-ready Gherkin). All deterministic, all inside our environment — no data leaves."><div class="n" data-count="3">0</div><div class="l">AI Accelerators</div><div class="e">Failure RCA · Defect Writer · Spark</div></div>
+  </div>
+  <div id="statDetail"></div>
+  <div class="core-line rv d4">Consumed as a <b>Maven dependency</b> — the test suite stays clean, the engine does the heavy lifting.</div>
+</section>
+
+<!-- S6 ARCHITECTURE -->
+<section class="slide" id="s6">
+  <div>
+    <div class="eyebrow rv">Architecture · Interactive</div>
+    <h2 class="rv d1" style="margin-bottom:4px">One core. Pluggable everything.</h2>
+  </div>
+  <div id="archStage" class="rv d2">
+    <button id="resetArch">↺ Reset layout</button>
+    <svg id="wires"></svg>
+    <div id="dockHint"><b style="color:var(--muted)">CORE</b> modules stay · <b style="color:var(--gold)">AI Spark</b> is pluggable</div>
+  </div>
+  <div id="archLegend" class="rv d3">
+    <span><b>Blue wires</b> — core execution capabilities</span>
+    <span><b style="color:var(--gold)">Gold wires</b> — AI accelerators, fully pluggable</span>
+  </div>
+</section>
+
+<!-- S7 WEB BREADTH -->
+<section class="slide" id="s7">
+  <div class="eyebrow rv">Web Automation</div>
+  <h2 class="rv d1">From one technology to seven</h2>
+  <p class="sub rv d2">Hover any tile. Every one of them runs on the same engine, the same steps — zero rewrites.</p>
+  <div class="flip-grid rv d3">
+    <div class="flip"><span class="known">YOU SAW THIS</span><div class="flip-inner">
+      <div class="flip-face flip-front" style="border-color:rgba(229,165,12,.55)"><div class="fi">🐜</div><div class="ft">Ant Design</div></div>
+      <div class="flip-face flip-back"><div class="zr">WHERE IT BEGAN</div><p>The original NAFPro scope — now one of seven.</p></div>
+    </div></div>
+    <div class="flip"><div class="flip-inner">
+      <div class="flip-face flip-front"><div class="fi">⊞</div><div class="ft">AG Grid</div></div>
+      <div class="flip-face flip-back"><div class="zr">ZERO REWRITE</div><p>Enterprise data grids — pagination, cross-page search, row context.</p></div>
+    </div></div>
+    <div class="flip"><div class="flip-inner">
+      <div class="flip-face flip-front"><div class="fi">◐</div><div class="ft">MUI</div></div>
+      <div class="flip-face flip-back"><div class="zr">ZERO REWRITE</div><p>Material UI apps run on the identical step library.</p></div>
+    </div></div>
+    <div class="flip"><div class="flip-inner">
+      <div class="flip-face flip-front"><div class="fi">◆</div><div class="ft">PrimeNG</div></div>
+      <div class="flip-face flip-back"><div class="zr">ZERO REWRITE</div><p>Auto-detected and dispatched to the right handler.</p></div>
+    </div></div>
+    <div class="flip"><div class="flip-inner">
+      <div class="flip-face flip-front"><div class="fi">▲</div><div class="ft">Angular Material</div></div>
+      <div class="flip-face flip-back"><div class="zr">ZERO REWRITE</div><p>Sorting, filtering, global search — same Gherkin.</p></div>
+    </div></div>
+    <div class="flip"><div class="flip-inner">
+      <div class="flip-face flip-front"><div class="fi">⌗</div><div class="ft">Generic HTML</div></div>
+      <div class="flip-face flip-back"><div class="zr">ZERO REWRITE</div><p>Plain HTML tables and forms — no special casing.</p></div>
+    </div></div>
+    <div class="flip"><div class="flip-inner">
+      <div class="flip-face flip-front"><div class="fi">🖥️</div><div class="ft">Windows Desktop</div></div>
+      <div class="flip-face flip-back"><div class="zr">SAME MODEL</div><p>Desktop apps via Appium Windows Driver — same reporting.</p></div>
+    </div></div>
+    <div class="flip"><div class="flip-inner">
+      <div class="flip-face flip-front"><div class="fi">🎯</div><div class="ft">Auto Dispatch</div></div>
+      <div class="flip-face flip-back"><div class="zr">ZERO CONFIG</div><p>Framework detected at runtime, routed automatically.</p></div>
+    </div></div>
+  </div>
+  <div class="breadth-note rv d4">Framework upgrades happen. <b>Test rewrites don't.</b></div>
+</section>
+
+<!-- S8 DESKTOP -->
+<section class="slide" id="s8">
+  <div class="eyebrow rv">New Since Last Demo</div>
+  <h2 class="rv d1">Windows Desktop support</h2>
+  <p class="sub rv d2">The same automation model now extends beyond the browser — full architecture and session lifecycle, powered by Appium Windows Driver.</p>
+  <div class="dk-wrap">
+    <div class="dk-window rv d3">
+      <div class="dk-bar"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+      <div class="dk-body" id="dkTerm"></div>
+    </div>
+    <div class="life-line rv d4">
+      <div class="life-step"><div class="life-dot"></div><div><h3>Session start</h3><p>DesktopEngine attaches to the Windows application under test.</p></div></div>
+      <div class="life-step"><div class="life-dot"></div><div><h3>Execute</h3><p>DesktopTable and step library drive the app — same Gherkin as web.</p></div></div>
+      <div class="life-step"><div class="life-dot"></div><div><h3>Report</h3><p>Results flow into the same HTML + Excel reporting pipeline.</p></div></div>
+      <div class="life-step"><div class="life-dot"></div><div><h3>Teardown</h3><p>Clean session lifecycle — no orphaned processes.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- S9 AI RCA -->
+<section class="slide" id="s9">
+  <div class="eyebrow gold rv">AI Accelerator 1 of 3</div>
+  <h2 class="rv d1">AI Failure RCA</h2>
+  <p class="sub rv d2">Every failure gets an automatic root cause analysis — deterministic AI, no LLM, no data leaving our environment.</p>
+  <div class="rca-wrap">
+    <div class="rca-card rv d3">
+      <div class="rca-row"><span class="k">Failed TC</span><span class="v mono">TC_POL_014</span></div>
+      <div class="rca-row"><span class="k">Root cause</span><span class="v">Element state changed post-submit</span></div>
+      <div class="rca-row"><span class="k">Classification</span><span class="v app">Application Issue</span></div>
+      <div class="rca-row"><span class="k">Ownership</span><span class="v">Dev Team</span></div>
+      <div class="rca-row"><span class="k">Recommendation</span><span class="v">Fix ready — see defect draft</span></div>
+    </div>
+    <div class="gauge-wrap rv d4">
+      <div class="gauge">
+        <svg width="190" height="190" viewBox="0 0 190 190">
+          <defs><linearGradient id="gaugeGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#0EA5E9"/><stop offset="100%" stop-color="#22D3EE"/>
+          </linearGradient></defs>
+          <circle class="track" cx="95" cy="95" r="80"/>
+          <circle class="fill" id="gaugeFill" cx="95" cy="95" r="80"/>
+        </svg>
+        <div class="val"><div class="n" id="gaugeNum">0%</div><div class="l">AI Confidence</div></div>
+      </div>
+      <ul class="rca-points">
+        <li>Runs automatically on every failed test case</li>
+        <li>Classifies ownership: App / Script / Data / Environment</li>
+        <li>Rendered directly inside the execution report</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- S10 DEFECT WRITER -->
+<section class="slide" id="s10">
+  <div class="eyebrow gold rv">AI Accelerator 2 of 3</div>
+  <h2 class="rv d1">AI Defect Writer</h2>
+  <p class="sub rv d2">From RCA straight to a JIRA-ready defect draft — title, severity, repro steps, expected vs actual. Copy, paste, done.</p>
+  <div class="jira-card rv d3">
+    <div class="jira-head"><span class="jira-key">DRAFT · JIRA-READY</span><span class="jira-sev">MAJOR</span><span style="color:var(--muted)">generated from RCA</span></div>
+    <div class="jira-body" id="jiraType"></div>
+  </div>
+  <div class="dw-note rv d4">Defect writing time drops from minutes to <b>seconds per failure</b> — and every draft is consistent.</div>
+</section>
+
+<!-- S11 SPARK -->
+<section class="slide" id="s11">
+  <div class="eyebrow gold rv">AI Accelerator 3 of 3</div>
+  <h2 class="rv d1">AI Spark — requirements to automation</h2>
+  <p class="sub rv d2">This is where AI plays its biggest part in Atlas: a shift-left pipeline that turns a BRD into automation-ready assets, matched against our own reusable step library.</p>
+  <div class="spark-flow rv d3">
+    <div class="sp-stage" data-sp><div class="si">📄</div><div class="st">BRD</div><div class="ss">Requirement in</div></div>
+    <div class="sp-arrow" data-spa>➜</div>
+    <div class="sp-stage" data-sp><div class="si">🔍</div><div class="st">Flow Analysis</div><div class="ss">AI reads the module</div></div>
+    <div class="sp-arrow" data-spa>➜</div>
+    <div class="sp-stage" data-sp><div class="si">📋</div><div class="st">Scenarios</div><div class="ss">AI-generated coverage</div></div>
+    <div class="sp-arrow" data-spa>➜</div>
+    <div class="sp-stage" data-sp><div class="si">⚡</div><div class="st">Gherkin</div><div class="ss">Uses existing steps</div></div>
+    <div class="sp-arrow" data-spa>➜</div>
+    <div class="sp-stage final" data-sp><div class="si">✅</div><div class="st">Ready Assets</div><div class="ss">Feature + Data + Constants</div></div>
+  </div>
+  <div class="spark-facts rv d4">
+    <div class="sf"><h3>3-tier readiness gate</h3><p>Every generation is scored: ≥80% READY, 50–79% review required, below 50% apply is blocked. Quality gate built in.</p></div>
+    <div class="sf"><h3>Preview-first, human-approved</h3><p>Everything lands in a safe preview folder first. Nothing touches framework folders until a reviewer runs apply. Spark assists — QA approves.</p></div>
+    <div class="sf"><h3>REVIEW.md summary</h3><p>Each run produces a review report: generated assets, test case and step counts, readiness score, and what still needs manual work.</p></div>
+    <div class="sf"><h3>Step reusability matching</h3><p>Generated Gherkin is matched against our reusable step catalog, so feature files work with the framework immediately — no orphan steps.</p></div>
+    <div class="sf"><h3>Full lifecycle commands</h3><p>Generate → finalize → review → apply, with status and clean commands per module. Controlled, repeatable, auditable.</p></div>
+  </div>
+</section>
+
+<!-- S12 REPORTING -->
+<section class="slide" id="s12">
+  <div class="eyebrow rv">Outputs</div>
+  <h2 class="rv d1">Reporting — then vs now</h2>
+  <div class="rep-compare">
+    <div class="rep-then rv d2">
+      <h3>Then (NAFPro)</h3>
+      <li>Custom execution report</li>
+      <li>Basic execution summary</li>
+      <li>One technology's results</li>
+    </div>
+    <div class="rep-now rv d3">
+      <h3>Now (Atlas)</h3>
+      <div class="rep-grid">
+        <div class="rep-item"><span class="ri">📄</span><div><h4>HTML Dashboard</h4><p>Self-contained, collapsible test cases with step-level detail.</p></div></div>
+        <div class="rep-item"><span class="ri">📊</span><div><h4>Excel Summary</h4><p>Multi-sheet workbook: summary, test cases, steps, screenshots.</p></div></div>
+        <div class="rep-item"><span class="ri">📸</span><div><h4>Screenshots</h4><p>Captured per step, clickable thumbnails in reports.</p></div></div>
+        <div class="rep-item"><span class="ri">⚡</span><div><h4>AI RCA Card</h4><p>Root cause, confidence, owner — per failed TC, in-report.</p></div></div>
+        <div class="rep-item"><span class="ri">📝</span><div><h4>AI Defect Draft</h4><p>JIRA-ready defect rendered right below the RCA.</p></div></div>
+        <div class="rep-item"><span class="ri">🧾</span><div><h4>Client-ready Evidence</h4><p>Every run is auditable — step, screenshot, result, timestamp.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- S13 DEMO -->
+<section class="slide" id="s13">
+  <div class="demo-pulse rv">▶</div>
+  <h1 class="rv d1" style="font-size:clamp(2.4rem,4.6vw,3.8rem)">Live <span class="grad-text">Demo</span></h1>
+  <p class="hero-sub rv d2" style="margin-top:14px">Switching to the framework now. Back here in a few minutes.</p>
+  <div class="demo-items rv d3">
+    <div class="demo-chip"><span class="mono">01</span>Run a suite across two UI technologies</div>
+    <div class="demo-chip"><span class="mono">02</span>HTML report with AI RCA + defect draft</div>
+    <div class="demo-chip"><span class="mono">03</span>QMetry result sync</div>
+  </div>
+</section>
+
+<!-- S14 USE CASE -->
+<section class="slide" id="s14">
+  <div class="eyebrow rv">Proof · STATIM 2.0</div>
+  <h2 class="rv d1">In use on STATIM — today</h2>
+  <p class="sub rv d2">Atlas is automating real insurance workflows on STATIM 2.0. These modules are covered end to end.</p>
+  <div class="uc-mods rv d3">
+    <div class="uc-mod">🧩 Product Configurator</div>
+    <div class="uc-mod">📑 Underwriting (New Business)</div>
+    <div class="uc-mod">⚙️ Rules &amp; Rating Engine</div>
+    <div class="uc-mod">📝 Endorsement</div>
+  </div>
+  <div class="uc-compare rv d3">
+    <div class="uc-row">
+      <div class="uc-label"><h4>Product Configuration</h4><p>Full Health product setup</p></div>
+      <div class="uc-bars">
+        <div class="uc-bar-line"><span class="uc-who">Manual</span><div class="uc-track"><div class="uc-fill manual" data-w="100"></div></div><span class="uc-time">5–6 hrs</span></div>
+        <div class="uc-bar-line"><span class="uc-who">Atlas</span><div class="uc-track"><div class="uc-fill auto" data-w="7.5"></div></div><span class="uc-time gold">~25 min</span></div>
+      </div>
+    </div>
+    <div class="uc-row">
+      <div class="uc-label"><h4>Policy Generation</h4><p>Transaction only, Health product</p></div>
+      <div class="uc-bars">
+        <div class="uc-bar-line"><span class="uc-who">Manual</span><div class="uc-track"><div class="uc-fill manual" data-w="100"></div></div><span class="uc-time">6–10 min</span></div>
+        <div class="uc-bar-line"><span class="uc-who">Atlas</span><div class="uc-track"><div class="uc-fill auto" data-w="19"></div></div><span class="uc-time gold">1–2 min</span></div>
+      </div>
+    </div>
+  </div>
+  <p class="res-note rv d4">The STATIM QA team is <b>currently using Atlas to configure products</b> — this is live usage, not a plan.</p>
+</section>
+
+<!-- S15 ROI -->
+<section class="slide" id="s15">
+  <div class="eyebrow gold rv">The Business Case</div>
+  <h2 class="rv d1">Margin protection through <span class="grad-text">automation.</span></h2>
+  <p class="sub rv d2">Every hour of QA effort Atlas removes lowers the cost of delivering each release. The same coverage, the same quality bar — at a fraction of the effort, release after release.</p>
+  <div class="roi-math rv d3">
+    <div class="roi-cell"><div class="rn" data-count="6">0</div><div class="rl">Validation cycles per release</div><div class="rd">2 smoke · 2 SIT · 2 regression</div></div>
+    <div class="roi-x">×</div>
+    <div class="roi-cell"><div class="rn" data-count="8">0</div><div class="rl">Major releases per year</div><div class="rd">2 per quarter · patches excluded</div></div>
+    <div class="roi-x">=</div>
+    <div class="roi-cell hot"><div class="rn" data-count="48">0</div><div class="rl">Validation cycles / year</div><div class="rd">Where the savings compound</div></div>
+  </div>
+  <div class="roi-save rv d3">
+    <div class="roi-save-bar">
+      <div class="rs-line"><span class="rs-who">Product Configuration — manual</span><div class="rs-track"><div class="rs-fill manual" data-w="100"></div></div><span class="rs-val">~5.5 hrs / cycle</span></div>
+      <div class="rs-line"><span class="rs-who">Product Configuration — Atlas</span><div class="rs-track"><div class="rs-fill auto" data-w="7.5"></div></div><span class="rs-val gold">~25 min / cycle</span></div>
+    </div>
+    <div class="roi-verdict"><span class="big">~92%</span> effort reduction per configuration cycle — repeated across <b>48 cycles a year</b>, on Product Configurator <b>and</b> Underwriting, since a full policy cannot go live without both validated.</div>
+  </div>
+  <div class="atlas-line rv d4"><b>Effort saved is margin protected</b> — every cycle, every release, every year.</div>
+</section>
+
+<!-- S16 NEXUS -->
+<section class="slide" id="s16">
+  <div class="eyebrow gold rv">What's Next · In Development</div>
+  <h2 class="rv d1">NAFPro <span class="grad-text">AI Nexus</span></h2>
+  <p class="sub rv d2">The next layer above Atlas: an AI orchestration platform where QA engineers talk to their automation in natural language. Atlas stays the execution engine — Nexus becomes the intelligent brain.</p>
+  <div class="nexus-wrap rv d3">
+    <div class="nx-chat" id="nxChat">
+      <div class="nx-head"><span class="nx-dot"></span>NAFPro AI Nexus</div>
+      <div class="nx-body" id="nxBody"></div>
+    </div>
+    <div class="nx-facts">
+      <div class="sf"><h3>Chat-driven execution</h3><p>A tester types "Run Product Config smoke tests" — Nexus recognises the intent, resolves the execution type, maps it to the correct suite in STATIM_Automation, launches it through NAFPro, tracks progress, and returns an analysed summary with suggested next actions. The full chain — natural language → planning → browser execution → report back — is already demonstrated end to end.</p></div>
+      <div class="sf"><h3>Failure analysis on demand</h3><p>Ask "Why did Product Config fail?" and Nexus reads the automation reports, screenshots, RCA output, and Defect Writer draft — then explains the root cause, the failed step, the likely owner, and the probable fix, and offers to re-execute failed scenarios only. No more digging through logs manually.</p></div>
+      <div class="sf"><h3>Enterprise-safe AI</h3><p>Built for finance and insurance-grade governance: Nexus runs entirely inside our network, automation executes locally, and reports stay on-premise. Passwords, PII, policy numbers, and financial values can be masked before anything reaches AI analysis. The LLM itself is swappable — OpenAI, Azure OpenAI, Ollama, or enterprise-hosted — so there is no vendor lock-in.</p></div>
+      <div class="sf"><h3>Built, not vapour</h3><p>The Spring Boot AI platform, capability routing, execution planner, process engine, and multi-repository management are complete, reusing NAFPro's reporting, RCA, Defect Writer, and recovery engines without modification. Next phases: report intelligence, conversational analysis, AI authoring of scenarios and step definitions, and smart reruns.</p></div>
+    </div>
+  </div>
+  <div class="atlas-line rv d4">NAFPro → Atlas → <b>Nexus.</b> The framework keeps evolving — and it all stays in-house.</div>
+</section>
+
+<!-- S17 NOVAC BRDGE -->
+<section class="slide" id="s17">
+  <div class="eyebrow gold rv">Component 2 of 2</div>
+  <h2 class="rv d1">NOVAC <span class="grad-text">BRDge</span></h2>
+  <p class="sub rv d2">AI-powered BRD upgrade &amp; generation, built to the STATIM 15-section standard.</p>
+  <div class="spark-flow rv d3">
+    <div class="sp-stage" data-bp><div class="si">📄</div><div class="st">BRD Input</div><div class="ss">Existing or from scratch</div></div>
+    <div class="sp-arrow" data-bpa>➜</div>
+    <div class="sp-stage" data-bp><div class="si">🔍</div><div class="st">Gap Analysis</div><div class="ss">Checked against STATIM standard</div></div>
+    <div class="sp-arrow" data-bpa>➜</div>
+    <div class="sp-stage" data-bp><div class="si">🧩</div><div class="st">Context Match</div><div class="ss">11 modules, 3 markets</div></div>
+    <div class="sp-arrow" data-bpa>➜</div>
+    <div class="sp-stage final" data-bp><div class="si">✅</div><div class="st">Upgraded BRD</div><div class="ss">15-section, ready for review</div></div>
+  </div>
+  <div class="spark-facts rv d4">
+    <div class="sf"><h3>Upgrade or build from scratch</h3><p>Existing BRDs missing integration details or process flows get gap-analysed and upgraded. New BRDs get built from PO inputs and Figma wireframes.</p></div>
+    <div class="sf"><h3>STATIM 15-section template</h3><p>Every output follows the same standard structure, so BRDs are consistent across BAs and modules.</p></div>
+    <div class="sf"><h3>Full module context embedded</h3><p>All 11 STATIM modules are built into the tool's knowledge, so integration points and process flows aren't missed.</p></div>
+    <div class="sf"><h3>Multi-market aware</h3><p>Regulatory context for IRDAI (India), Insurance Authority (UAE), and FSCA (South Africa) built in.</p></div>
+    <div class="sf"><h3>Secure by design</h3><p>Runs on an internal Node.js backend — the API key stays server-side, never exposed in the browser.</p></div>
+  </div>
+</section>
+
+<!-- S18 THANK YOU -->
+<section class="slide" id="s18">
+  <div class="ty-glow rv"></div>
+  <h1 class="rv d1" style="font-size:clamp(2.4rem,4.6vw,3.8rem)">Thank <span class="grad-text">you</span></h1>
+  <p class="hero-sub rv d2" style="margin-top:14px">Atlas isn't just a STATIM story. The engine is project-agnostic by design.</p>
+  <div class="ty-cta rv d3">
+    <h3>Bring your project</h3>
+    <p>If your team runs regression-heavy suites, works across multiple UI technologies, or automates desktop flows — Atlas is ready to pilot with you. One conversation is all it takes to scope it.</p>
+  </div>
+  <div class="ty-chips rv d4">
+    <div class="chip">Regression suites</div>
+    <div class="chip">Multi-technology web apps</div>
+    <div class="chip">Desktop workflows</div>
+    <div class="chip">AI-assisted QA</div>
+  </div>
+  <div class="presenter rv d4">Sriram Ramkumar · QA Manager · STATIM 2.0 · NOVAC Technology Solutions</div>
+</section>
+
+</div>
+
+<script>
+/* ===== NAVIGATION ===== */
+const slides=[...document.querySelectorAll('.slide')];
+const hud=document.getElementById('hud'),progress=document.getElementById('progress'),counter=document.getElementById('counter');
+let cur=0;
+slides.forEach((_,i)=>{const d=document.createElement('div');d.className='dot';d.onclick=()=>go(i);hud.appendChild(d);});
+const dots=[...hud.children];
+
+let loopTimers=[];
+function clearLoops(){loopTimers.forEach(t=>clearTimeout(t));loopTimers=[];}
+function loop(fn,every){fn();const cyc=()=>{loopTimers.push(setTimeout(()=>{fn();cyc();},every));};cyc();}
+
+let filmBridged=false;
+function go(i){
+  if(i<0||i>=slides.length)return;
+  /* flashback → evolution: colorize first, then transition */
+  if(slides[cur].id==='s2'&&i>cur&&!filmBridged){
+    filmBridged=true;
+    document.getElementById('filmBox').classList.add('colorize');
+    setTimeout(()=>realGo(i),750);return;
+  }
+  realGo(i);
+}
+function realGo(i){
+  clearLoops();
+  slides[cur].classList.remove('active');
+  slides[cur].classList.toggle('prev',i>cur);
+  cur=i;
+  slides.forEach((s,j)=>s.classList.toggle('prev',j<cur));
+  slides[cur].classList.add('active');
+  dots.forEach((d,j)=>d.classList.toggle('on',j===cur));
+  progress.style.width=((cur+1)/slides.length*100)+'%';
+  counter.textContent=(cur+1)+' / '+slides.length;
+  onEnter(slides[cur].id);
+}
+document.getElementById('prevB').onclick=()=>go(cur-1);
+document.getElementById('nextB').onclick=()=>go(cur+1);
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='PageDown')go(cur+1);
+  else if(e.key==='ArrowLeft'||e.key==='PageUp')go(cur-1);
+  else if(e.key===' '){e.preventDefault();spaceAction();}
+  else if(e.key==='Backspace'&&slides[cur].id==='s4'){e.preventDefault();unstrikeLast();}
+});
+/* swipe */
+let tx=0,ty=0;
+document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
+document.addEventListener('touchend',e=>{
+  if(e.target.closest('#archStage'))return;
+  const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;
+  if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy))go(cur+(dx<0?1:-1));
+},{passive:true});
+
+/* ===== COUNTERS ===== */
+function runCounters(scope){
+  scope.querySelectorAll('[data-count]').forEach(el=>{
+    const target=+el.dataset.count,suf=el.dataset.suffix||'';
+    if(el._done)return; el._done=true;
+    const t0=performance.now(),dur=1400;
+    (function tick(t){
+      const p=Math.min((t-t0)/dur,1),e=1-Math.pow(1-p,3);
+      el.textContent=Math.round(target*e)+suf;
+      if(p<1)requestAnimationFrame(tick);
+    })(t0);
+  });
+}
+
+/* ===== S2 FLASHBACK — film leader + reset ===== */
+function filmFx(){
+  filmBridged=false;
+  const f=document.getElementById('filmBox'),ld=document.getElementById('filmLeader'),n=document.getElementById('leadNum');
+  f.classList.remove('colorize');
+  ld.classList.remove('gone');
+  let c=3;n.textContent=c;
+  const step=()=>{c--;
+    if(c>0){n.textContent=c;loopTimers.push(setTimeout(step,700));}
+    else ld.classList.add('gone');
+  };
+  loopTimers.push(setTimeout(step,700));
+}
+
+/* ===== S4 PAIN STRIKES (toggle + undo) ===== */
+let strikeStack=[];
+const painEls=()=>[...document.querySelectorAll('[data-pain]')];
+function syncResolve(){
+  document.getElementById('resolveLine').classList.toggle('show',
+    painEls().every(p=>p.classList.contains('struck')));
+}
+function strikeNext(){
+  const p=painEls().find(x=>!x.classList.contains('struck'));
+  if(p){p.classList.add('struck');strikeStack.push(p);}
+  syncResolve();
+}
+function unstrikeLast(){
+  const p=strikeStack.pop();
+  if(p)p.classList.remove('struck');
+  syncResolve();
+}
+function resetPains(){
+  painEls().forEach(p=>p.classList.remove('struck'));
+  strikeStack=[];syncResolve();
+}
+document.getElementById('s4').addEventListener('click',e=>{
+  if(e.target.closest('#painReset')){resetPains();return;}
+  const p=e.target.closest('[data-pain]');
+  if(p){
+    if(p.classList.contains('struck')){p.classList.remove('struck');strikeStack=strikeStack.filter(x=>x!==p);}
+    else{p.classList.add('struck');strikeStack.push(p);}
+    syncResolve();
+  } else if(!e.target.closest('.navbtn'))strikeNext();
+});
+function spaceAction(){
+  if(slides[cur].id==='s4')strikeNext(); else go(cur+1);
+}
+
+/* ===== S5 STAT DETAILS ===== */
+document.querySelectorAll('#s5 .stat').forEach(st=>{
+  st.addEventListener('click',()=>{
+    document.querySelectorAll('#s5 .stat').forEach(x=>x.classList.remove('sel'));
+    st.classList.add('sel');
+    const d=document.getElementById('statDetail');
+    d.textContent=st.dataset.detail;
+    d.classList.add('show');
+  });
+});
+
+/* ===== S6 INTERACTIVE ARCHITECTURE ===== */
+const stage=document.getElementById('archStage'),wires=document.getElementById('wires');
+const NODES=[
+ {id:'core', t:'Atlas Engine', s:'One layer · Zero rewrites', i:'🧭', core:true, x:.5, y:.46},
+ {id:'table', t:'Table Engine', s:'6 UI frameworks', i:'⊞', locked:true, x:.16, y:.2},
+ {id:'report', t:'Reporting', s:'HTML · Excel · Shots', i:'📊', locked:true, x:.5, y:.12},
+ {id:'qmetry', t:'QMetry Sync', s:'Result upload', i:'🔗', x:.84, y:.2},
+ {id:'desktop', t:'Desktop', s:'Appium Windows', i:'🖥️', locked:true, x:.13, y:.62},
+ {id:'data', t:'Data Mgmt', s:'TD_ runtime JSON', i:'🗂️', locked:true, x:.87, y:.62},
+ {id:'rca', t:'AI Failure RCA', s:'Deterministic AI', i:'⚡', gold:true, x:.24, y:.86},
+ {id:'writer', t:'AI Defect Writer', s:'JIRA-ready drafts', i:'📝', gold:true, x:.5, y:.9},
+ {id:'spark', t:'AI Spark', s:'BRD → Gherkin', i:'✨', gold:true, plug:true, x:.76, y:.86},
+];
+let nodeEls={},built=false;
+function buildArch(){
+  if(built)return; built=true;
+  NODES.forEach(n=>{
+    const el=document.createElement('div');
+    el.className='node'+(n.core?' core':'')+(n.gold?' gold':'')+(n.locked?' locked':'');
+    el.innerHTML=(n.plug?'<span class="pluggable">PLUG-IN</span>':'')+
+      (n.locked?'<span class="corepin">CORE</span>':'')+
+      `<div class="ni">${n.i}</div><div class="nt">${n.t}</div><div class="ns">${n.s}</div>`;
+    stage.appendChild(el); nodeEls[n.id]=el; el._n=n;
+    if(!n.core)enableDrag(el);
+  });
+  layoutArch(); drawWires();
+  new ResizeObserver(()=>{layoutArch(true);drawWires();}).observe(stage);
+}
+function layoutArch(keepMoved){
+  const W=stage.clientWidth,H=stage.clientHeight;
+  NODES.forEach(n=>{
+    const el=nodeEls[n.id];
+    if(keepMoved&&el._moved)return;
+    el.style.left=(n.x*W-el.offsetWidth/2)+'px';
+    el.style.top=(n.y*H-el.offsetHeight/2)+'px';
+  });
+}
+function center(el){return{x:el.offsetLeft+el.offsetWidth/2,y:el.offsetTop+el.offsetHeight/2};}
+function drawWires(){
+  const c=center(nodeEls.core);let html='';
+  NODES.forEach(n=>{
+    if(n.core)return;
+    const el=nodeEls[n.id];
+    if(el.classList.contains('ghosted'))return;
+    const p=center(el);
+    html+=`<line x1="${c.x}" y1="${c.y}" x2="${p.x}" y2="${p.y}" class="${n.gold?'gold':''}"/>`;
+  });
+  wires.innerHTML=html;
+}
+function enableDrag(el){
+  let sx,sy,ox,oy,moved;
+  el.addEventListener('pointerdown',e=>{
+    e.preventDefault();el.setPointerCapture(e.pointerId);
+    sx=e.clientX;sy=e.clientY;ox=el.offsetLeft;oy=el.offsetTop;moved=false;
+    const mv=ev=>{
+      const dx=ev.clientX-sx,dy=ev.clientY-sy;
+      if(Math.abs(dx)+Math.abs(dy)>6)moved=true;
+      el.style.left=Math.max(-40,Math.min(stage.clientWidth-el.offsetWidth+40,ox+dx))+'px';
+      el.style.top=Math.max(-20,Math.min(stage.clientHeight-el.offsetHeight+20,oy+dy))+'px';
+      el._moved=true;drawWires();
+    };
+    const up=()=>{
+      el.removeEventListener('pointermove',mv);el.removeEventListener('pointerup',up);
+      if(!moved)toggleNode(el);
+    };
+    el.addEventListener('pointermove',mv);el.addEventListener('pointerup',up);
+  });
+}
+function toggleNode(el){
+  if(el._n.locked)return;
+  if(el.classList.contains('ghosted')){
+    el.classList.remove('ghosted');el.classList.add('pop');
+    setTimeout(()=>el.classList.remove('pop'),480);
+  } else el.classList.add('ghosted');
+  drawWires();
+}
+document.getElementById('resetArch').onclick=e=>{
+  e.stopPropagation();
+  Object.values(nodeEls).forEach(el=>{el._moved=false;el.classList.remove('ghosted');});
+  layoutArch();drawWires();
+};
+
+/* ===== S8 DESKTOP TERMINAL (looped) ===== */
+const dkLines=[
+ ['> DesktopEngine.start("STATIM.Desktop.exe")','hl'],
+ ['  session created · WinAppDriver attached','ok'],
+ ['> run feature: policy_desktop.feature',''],
+ ['  12 steps executed · screenshots captured','ok'],
+ ['> report.generate()  →  HTML + Excel','hl'],
+ ['  session closed · teardown clean ✓','ok'],
+];
+function dkPlay(){
+  const t=document.getElementById('dkTerm');t.innerHTML='';
+  dkLines.forEach((l,i)=>loopTimers.push(setTimeout(()=>{
+    t.innerHTML+=`<div class="${l[1]}">${l[0]}</div>`;
+  },400+i*520)));
+}
+
+/* ===== S9 GAUGE (looped) ===== */
+function gaugePlay(){
+  const fill=document.getElementById('gaugeFill'),el=document.getElementById('gaugeNum');
+  fill.style.transition='none';fill.style.strokeDashoffset=502;el.textContent='0%';
+  loopTimers.push(setTimeout(()=>{
+    fill.style.transition='stroke-dashoffset 1.6s cubic-bezier(.22,1,.36,1)';
+    fill.style.strokeDashoffset=502-(502*.92);
+    const t0=performance.now();
+    (function tick(t){const p=Math.min((t-t0)/1600,1);
+      el.textContent=Math.round(92*(1-Math.pow(1-p,3)))+'%';
+      if(p<1)requestAnimationFrame(tick);})(t0);
+  },450));
+}
+
+/* ===== S10 TYPEWRITER (looped) ===== */
+const jiraText=`Title: Policy submit — Save button remains disabled after mandatory fields filled
+
+Severity: Major        Module: Policy Management
+Environment: STATIM QA
+
+Steps to Reproduce:
+ 1. Login and open Policy Creation
+ 2. Fill all mandatory fields
+ 3. Observe Save button state
+
+Expected: Save enabled once mandatory fields are valid
+Actual:   Save remains disabled; form state not re-evaluated`;
+function jiraPlay(){
+  const el=document.getElementById('jiraType');let i=0;el.innerHTML='';
+  (function type(){
+    el.innerHTML=jiraText.slice(0,i)+'<span class="cursor"></span>';
+    if(i++<jiraText.length)loopTimers.push(setTimeout(type,11));
+    else el.innerHTML=jiraText;
+  })();
+}
+
+/* ===== S11 SPARK SEQUENCE (looped) ===== */
+function sparkPlay(){
+  const st=[...document.querySelectorAll('[data-sp]')],ar=[...document.querySelectorAll('[data-spa]')];
+  st.forEach(s=>s.classList.remove('lit'));ar.forEach(a=>a.classList.remove('lit'));
+  st.forEach((s,i)=>loopTimers.push(setTimeout(()=>{
+    s.classList.add('lit'); if(ar[i])loopTimers.push(setTimeout(()=>ar[i].classList.add('lit'),260));
+  },500+i*620)));
+}
+/* ===== S14 USE CASE bars ===== */
+function ucPlay(){
+  const fills=[...document.querySelectorAll('#s14 .uc-fill')];
+  fills.forEach(f=>{f.style.transition='none';f.style.width='0'});
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    fills.forEach((f,i)=>loopTimers.push(setTimeout(()=>{
+      f.style.transition='width 1.3s cubic-bezier(.2,.8,.2,1)';
+      f.style.width=f.dataset.w+'%';
+    },300+i*350)));
+  }));
+}
+
+/* ===== S15 ROI bars ===== */
+function roiPlay(){
+  const fills=[...document.querySelectorAll('#s15 .rs-fill')];
+  fills.forEach(f=>{f.style.transition='none';f.style.width='0'});
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    fills.forEach((f,i)=>loopTimers.push(setTimeout(()=>{
+      f.style.transition='width 1.3s cubic-bezier(.2,.8,.2,1)';
+      f.style.width=f.dataset.w+'%';
+    },400+i*450)));
+  }));
+}
+
+/* ===== S16 NEXUS chat loop ===== */
+const nxScript=[
+  {who:'user',t:'Run Product Config smoke tests.'},
+  {who:'bot',t:'<b>Understood.</b> Mapping to STATIM_Automation → PC smoke suite. Launching execution…'},
+  {who:'bot',t:'<b>Done.</b> 24 passed · 1 failed. RCA: locator timeout on Plan Mapping grid. Suggested owner: Automation. Re-run failed only?'},
+  {who:'user',t:'Why did it fail?'},
+  {who:'bot',t:'Grid re-rendered mid-assertion after a rule refresh. <b>Fix:</b> wait-for-stable on PLAN_GRID before assert. Defect draft is ready to file.'}
+];
+function nexusPlay(){
+  const body=document.getElementById('nxBody');
+  body.innerHTML='';
+  nxScript.forEach((m,i)=>loopTimers.push(setTimeout(()=>{
+    const d=document.createElement('div');
+    d.className='nx-msg '+m.who;d.innerHTML=m.t;
+    body.appendChild(d);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>d.classList.add('show')));
+  },600+i*1600)));
+}
+
+function bridgePlay(){
+  const st=[...document.querySelectorAll('[data-bp]')],ar=[...document.querySelectorAll('[data-bpa]')];
+  st.forEach(s=>s.classList.remove('lit'));ar.forEach(a=>a.classList.remove('lit'));
+  st.forEach((s,i)=>loopTimers.push(setTimeout(()=>{
+    s.classList.add('lit'); if(ar[i])loopTimers.push(setTimeout(()=>ar[i].classList.add('lit'),260));
+  },500+i*620)));
+}
+
+/* ===== SLIDE ENTER DISPATCH ===== */
+function onEnter(id){
+  const s=document.getElementById(id);
+  if(id==='s2')filmFx();
+  if(id==='s3'){s.classList.remove('colorized');requestAnimationFrame(()=>requestAnimationFrame(()=>s.classList.add('colorized')));}
+  else if(document.getElementById('s3'))document.getElementById('s3').classList.remove('colorized');
+  if(id==='s5')setTimeout(()=>runCounters(s),400);
+  if(id==='s6')setTimeout(buildArch,250);
+  if(id==='s8')loop(dkPlay,6800);
+  if(id==='s9')loop(gaugePlay,5200);
+  if(id==='s10')loop(jiraPlay,9000);
+  if(id==='s11')loop(sparkPlay,6500);
+  if(id==='s14')loop(ucPlay,6000);
+  if(id==='s15'){setTimeout(()=>runCounters(s),400);loop(roiPlay,6500);}
+  if(id==='s16')loop(nexusPlay,10500);
+  if(id==='s17')loop(bridgePlay,6500);
+}
+
+go(0);
+</script>
+</body>
+</html>
